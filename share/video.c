@@ -289,7 +289,7 @@ void video_push_persp(float fov, float n, float f)
         m[3][2] = -2.0 * n * f / (f - n);
         m[3][3] =  0.0;
 
-        glMultMatrixd(&m[0][0]);
+        //glMultMatrixd(&m[0][0]); FIXME
     }
     glMatrixMode(GL_MODELVIEW);
 }

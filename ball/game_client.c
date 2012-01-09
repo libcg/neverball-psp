@@ -809,7 +809,7 @@ static void game_clip_refl(int d)
     e[2] = 0;
     e[3] = k;
 
-    glClipPlane(GL_CLIP_PLANE0, e);
+    //glClipPlane(GL_CLIP_PLANE0, e); FIXME
 }
 
 static void game_clip_ball(int d, const float *p)
@@ -857,9 +857,10 @@ static void game_clip_ball(int d, const float *p)
     nz[1] *= d;
     ny[1] *= d;
 
-    glClipPlane(GL_CLIP_PLANE1, nz);
-    glClipPlane(GL_CLIP_PLANE2, pz);
-    glClipPlane(GL_CLIP_PLANE3, ny);
+    // FIXME
+    //glClipPlane(GL_CLIP_PLANE1, nz);
+    //glClipPlane(GL_CLIP_PLANE2, pz);
+    //glClipPlane(GL_CLIP_PLANE3, ny);
 }
 
 static void game_draw_fore(int pose, const float *M, int d, float t)

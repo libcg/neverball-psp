@@ -117,7 +117,7 @@ static int gui_hot(int id)
 static GLuint gui_list(int x, int y,
                        int w, int h, const float *c0, const float *c1)
 {
-    GLuint list = glGenLists(1);
+    GLuint list = 0; //glGenLists(1); FIXME
 
     GLfloat s0, t0;
     GLfloat s1, t1;
@@ -136,7 +136,7 @@ static GLuint gui_list(int x, int y,
     s1 = 1.0f - s0;
     t1 = 1.0f - t0;
 
-    glNewList(list, GL_COMPILE);
+    //glNewList(list, GL_COMPILE); FIXME
     {
         glBegin(GL_QUADS);
         {
@@ -156,7 +156,7 @@ static GLuint gui_list(int x, int y,
         }
         glEnd();
     }
-    glEndList();
+    //glEndList(); FIXME
 
     return list;
 }
@@ -169,12 +169,12 @@ static GLuint gui_list(int x, int y,
 
 static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
 {
-    GLuint list = glGenLists(1);
+    GLuint list = 0; // = glGenLists(1); FIXME
 
     int n = 8;
     int i;
 
-    glNewList(list, GL_COMPILE);
+    //glNewList(list, GL_COMPILE); FIXME
     {
         glBegin(GL_QUAD_STRIP);
         {
@@ -218,7 +218,7 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
         }
         glEnd();
     }
-    glEndList();
+    //glEndList(); FIXME
 
     return list;
 }
@@ -338,10 +338,10 @@ void gui_free(void)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        if (glIsList(widget[id].text_obj))
+        /*if (glIsList(widget[id].text_obj)) FIXME
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
-            glDeleteLists(widget[id].rect_obj, 1);
+            glDeleteLists(widget[id].rect_obj, 1);*/
 
         widget[id].type     = GUI_FREE;
         widget[id].text_img = 0;
@@ -359,8 +359,8 @@ void gui_free(void)
             if (glIsTexture(digit_text[i][j]))
                 glDeleteTextures(1, &digit_text[i][j]);
 
-            if (glIsList(digit_list[i][j]))
-                glDeleteLists(digit_list[i][j], 1);
+            /*if (glIsList(digit_list[i][j])) FIXME
+                glDeleteLists(digit_list[i][j], 1);*/
         }
 
     /* Release all loaded fonts and finalize font rendering. */
@@ -545,8 +545,8 @@ void gui_set_label(int id, const char *text)
 
     if (glIsTexture(widget[id].text_img))
         glDeleteTextures(1, &widget[id].text_img);
-    if (glIsList(widget[id].text_obj))
-        glDeleteLists(widget[id].text_obj, 1);
+    /*if (glIsList(widget[id].text_obj)) FIXME
+        glDeleteLists(widget[id].text_obj, 1);*/
 
     text = gui_truncate(text, widget[id].w - radius,
                         font[widget[id].size],
@@ -586,7 +586,7 @@ void gui_set_color(int id, const float *c0,
             widget[id].color0 = c0;
             widget[id].color1 = c1;
 
-            if (glIsList(widget[id].text_obj))
+            /*if (glIsList(widget[id].text_obj)) FIXME
             {
                 int w, h;
 
@@ -598,7 +598,7 @@ void gui_set_color(int id, const float *c0,
                 widget[id].text_obj = gui_list(-w / 2, -h / 2, w, h,
                                                widget[id].color0,
                                                widget[id].color1);
-            }
+            }*/
         }
     }
 }
@@ -1170,10 +1170,10 @@ int gui_delete(int id)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        if (glIsList(widget[id].text_obj))
+        /*if (glIsList(widget[id].text_obj)) FIXME
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
-            glDeleteLists(widget[id].rect_obj, 1);
+            glDeleteLists(widget[id].rect_obj, 1);*/
 
         /* Mark this widget unused. */
 
@@ -1235,7 +1235,7 @@ static void gui_paint_rect(int id, int st)
                          (GLfloat) (widget[id].y + widget[id].h / 2), 0.f);
 
             glColor4fv(back[i]);
-            glCallList(widget[id].rect_obj);
+            //glCallList(widget[id].rect_obj); FIXME
         }
         glPopMatrix();
 
@@ -1284,7 +1284,7 @@ static void gui_paint_image(int id)
 
         glBindTexture(GL_TEXTURE_2D, widget[id].text_img);
         glColor4fv(gui_wht);
-        glCallList(widget[id].rect_obj);
+        //glCallList(widget[id].rect_obj); FIXME
     }
     glPopMatrix();
 }
@@ -1320,7 +1320,7 @@ static void gui_paint_count(int id)
             for (j = widget[id].value; j; j /= 10)
             {
                 glBindTexture(GL_TEXTURE_2D, digit_text[i][j % 10]);
-                glCallList(digit_list[i][j % 10]);
+                //glCallList(digit_list[i][j % 10]); FIXME
                 glTranslatef((GLfloat) -digit_w[i][j % 10], 0.0f, 0.0f);
             }
         }
@@ -1329,7 +1329,7 @@ static void gui_paint_count(int id)
             /* If the value is zero, just display a zero in place. */
 
             glBindTexture(GL_TEXTURE_2D, digit_text[i][0]);
-            glCallList(digit_list[i][0]);
+            //glCallList(digit_list[i][0]); FIXME
         }
     }
     glPopMatrix();
@@ -1376,28 +1376,28 @@ static void gui_paint_clock(int id)
         if (mt > 0)
         {
             glBindTexture(GL_TEXTURE_2D, digit_text[i][mt]);
-            glCallList(digit_list[i][mt]);
+            //glCallList(digit_list[i][mt]); FIXME
             glTranslatef(dx_large, 0.0f, 0.0f);
         }
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][mo]);
-        glCallList(digit_list[i][mo]);
+        //glCallList(digit_list[i][mo]); FIXME
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the colon. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][10]);
-        glCallList(digit_list[i][10]);
+        //glCallList(digit_list[i][10]); FIXME
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the seconds counter. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][st]);
-        glCallList(digit_list[i][st]);
+        //glCallList(digit_list[i][st]); FIXME
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][so]);
-        glCallList(digit_list[i][so]);
+        //glCallList(digit_list[i][so]); FIXME
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render hundredths counter half size. */
@@ -1405,11 +1405,11 @@ static void gui_paint_clock(int id)
         glScalef(0.5f, 0.5f, 1.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ht]);
-        glCallList(digit_list[i][ht]);
+        //glCallList(digit_list[i][ht]); FIXME
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ho]);
-        glCallList(digit_list[i][ho]);
+        //glCallList(digit_list[i][ho]); FIXME
     }
     glPopMatrix();
 }
@@ -1428,7 +1428,7 @@ static void gui_paint_label(int id)
                  widget[id].scale);
 
         glBindTexture(GL_TEXTURE_2D, widget[id].text_img);
-        glCallList(widget[id].text_obj);
+        //glCallList(widget[id].text_obj); FIXME
     }
     glPopMatrix();
 }

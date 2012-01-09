@@ -360,7 +360,7 @@ static void sol_draw_list(const struct s_file *fp,
 
         /* Draw the body. */
 
-        glCallList(list);
+        //glCallList(list); FIXME
     }
     glPopMatrix();
 }
@@ -529,7 +529,7 @@ static void sol_shad_list(const struct s_file *fp,
 
         /* Draw the body. */
 
-        glCallList(list);
+        //glCallList(list); FIXME
 
         /* Pop the shadow translation. */
 
@@ -578,9 +578,9 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (on)
         {
-            fp->bv[i].ol = glGenLists(1);
+            //fp->bv[i].ol = glGenLists(1); FIXME
 
-            glNewList(fp->bv[i].ol, GL_COMPILE);
+            //glNewList(fp->bv[i].ol, GL_COMPILE); FIXME
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
@@ -588,7 +588,7 @@ static void sol_load_objects(struct s_file *fp, int s)
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_OPAQUE, M_DECAL);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            glEndList();
+            //glEndList(); FIXME
         }
         else fp->bv[i].ol = 0;
 
@@ -596,9 +596,9 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (tn)
         {
-            fp->bv[i].tl = glGenLists(1);
+            //fp->bv[i].tl = glGenLists(1); FIXME
 
-            glNewList(fp->bv[i].tl, GL_COMPILE);
+            //glNewList(fp->bv[i].tl, GL_COMPILE); FIXME
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
@@ -606,7 +606,7 @@ static void sol_load_objects(struct s_file *fp, int s)
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_TRANSPARENT, 0);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            glEndList();
+            //glEndList(); FIXME
         }
         else fp->bv[i].tl = 0;
 
@@ -614,16 +614,16 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (rn)
         {
-            fp->bv[i].rl = glGenLists(1);
+            //fp->bv[i].rl = glGenLists(1); FIXME
 
-            glNewList(fp->bv[i].rl, GL_COMPILE);
+            //glNewList(fp->bv[i].rl, GL_COMPILE); FIXME
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_REFLECTIVE, 0);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            glEndList();
+            //glEndList(); FIXME
         }
         else fp->bv[i].rl = 0;
 
@@ -631,15 +631,15 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (s && (on || rn))
         {
-            fp->bv[i].sl = glGenLists(1);
+            //fp->bv[i].sl = glGenLists(1); FIXME
 
-            glNewList(fp->bv[i].sl, GL_COMPILE);
+            //glNewList(fp->bv[i].sl, GL_COMPILE); FIXME
             {
                 if (on) sol_shad_body(fp, fp->bv + i, M_OPAQUE, 0);
                 if (rn) sol_shad_body(fp, fp->bv + i, M_REFLECTIVE, 0);
                 if (dn) sol_shad_body(fp, fp->bv + i, M_OPAQUE, M_DECAL);
             }
-            glEndList();
+            //glEndList(); FIXME
         }
         else fp->bv[i].sl = 0;
     }
@@ -721,12 +721,12 @@ void sol_free_gl(struct s_file *fp)
 
     for (i = 0; i < fp->bc; i++)
     {
-        if (glIsList(fp->bv[i].ol))
+        /*if (glIsList(fp->bv[i].ol)) FIXME
             glDeleteLists(fp->bv[i].ol, 1);
         if (glIsList(fp->bv[i].tl))
             glDeleteLists(fp->bv[i].tl, 1);
         if (glIsList(fp->bv[i].rl))
-            glDeleteLists(fp->bv[i].rl, 1);
+            glDeleteLists(fp->bv[i].rl, 1);*/
     }
 
     sol_free(fp);

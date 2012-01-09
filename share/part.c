@@ -123,9 +123,9 @@ void part_init(float zh, float jh)
     part_text_star     = make_image_from_file(IMG_PART_STAR);
     part_text_squiggle = make_image_from_file(IMG_PART_SQUIGGLE);
 
-    part_list = glGenLists(1);
+    //part_list = glGenLists(1); FIXME
 
-    glNewList(part_list, GL_COMPILE);
+    //glNewList(part_list, GL_COMPILE); FIXME
     {
         glBegin(GL_QUADS);
         {
@@ -143,15 +143,15 @@ void part_init(float zh, float jh)
         }
         glEnd();
     }
-    glEndList();
+    //glEndList(); FIXME
 
     part_reset(zh, jh);
 }
 
 void part_free(void)
 {
-    if (glIsList(part_list))
-        glDeleteLists(part_list, 1);
+    /*if (glIsList(part_list)) FIXME
+        glDeleteLists(part_list, 1);*/
 
     if (glIsTexture(part_text_star))
         glDeleteTextures(1, &part_text_star);
@@ -260,7 +260,7 @@ static void part_draw(const float *M,
         glRotatef(rz, 0.f, 0.f, 1.f);
         glScalef(s, s, 1.0f);
 
-        glCallList(part_list);
+        //glCallList(part_list); FIXME
     }
     glPopMatrix();
 }

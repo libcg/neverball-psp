@@ -2,7 +2,7 @@ PSPSDK=$(shell psp-config --pspsdk-path)
 PSPDIR=$(shell psp-config --psp-prefix)
 TARGET = Neverball
 LIBS = -lphysfs -lpng -lz -ljpeg -lSDL -lSDL_ttf -lfreetype -lvorbisfile -lvorbis -logg -lGL -lGLU -lglut -lm -lpspaudio -lpspgu -lpspirkeyb -lpsppower -lpsphprm -lpsprtc -lpspvfpu -lc -lpsplibc
-CFLAGS = -O2 -Wall -I$(PSPDIR)/include/SDL -I./share
+CFLAGS = -O2 -Wall -G0 -I$(PSPDIR)/include/SDL -I./share
 
 OBJS =                \
   share/lang.o        \

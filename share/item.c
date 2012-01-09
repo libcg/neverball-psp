@@ -113,7 +113,7 @@ void item_draw(const struct s_item *hp, float r)
 
     item_color(hp, c);
 
-    glColor3fv(c);
+    glColor3f(c[0], c[1], c[2]); //glColor3fv(c); FIXME
     sol_draw(fp, 0, 1);
 }
 

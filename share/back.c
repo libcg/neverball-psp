@@ -40,9 +40,9 @@ void back_init(const char *s, int b)
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-    back_list = glGenLists(1);
+    //back_list = glGenLists(1); FIXME
 
-    glNewList(back_list, GL_COMPILE);
+    //glNewList(back_list, GL_COMPILE); FIXME
     {
         glBindTexture(GL_TEXTURE_2D, back_text);
 
@@ -76,16 +76,16 @@ void back_init(const char *s, int b)
             glEnd();
         }
     }
-    glEndList();
+    //glEndList(); FIXME
 }
 
 void back_free(void)
 {
-    if (glIsList(back_list))
-        glDeleteLists(back_list, 1);
+    //if (glIsList(back_list)) FIXME
+        //glDeleteLists(back_list, 1);
 
-    if (glIsTexture(back_text))
-        glDeleteTextures(1, &back_text);
+    //if (glIsTexture(back_text)) FIXME
+        //glDeleteTextures(1, &back_text);
 
     back_list = 0;
     back_text = 0;
@@ -105,7 +105,7 @@ void back_draw(float t)
             glRotatef(dz, 0.f, 0.f, 1.f);
             glRotatef(dx, 1.f, 0.f, 0.f);
 
-            glCallList(back_list);
+            //glCallList(back_list); FIXME
         }
         glDepthMask(GL_TRUE);
         glEnable(GL_LIGHTING);
