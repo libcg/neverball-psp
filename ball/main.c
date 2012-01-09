@@ -17,6 +17,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <string.h>
+#include <pspkernel.h>
 
 #include "glext.h"
 #include "config.h"
@@ -36,6 +37,26 @@
 #include "st_demo.h"
 #include "st_level.h"
 #include "st_pause.h"
+
+PSP_MODULE_INFO("Neverball", 0, 1, 1);
+PSP_HEAP_SIZE_KB(-4096);
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+
+/* Callbacks */
+int exit_callback(int arg1, int arg2, void *common) {
+  sceKernelExitGame();
+  return 0; }
+int CallbackThread(SceSize args, void *argp) {
+  int cbid;
+  cbid = sceKernelCreateCallback("Exit Callback",exit_callback,NULL);
+  sceKernelRegisterExitCallback(cbid);
+  sceKernelSleepThreadCB();
+  return 0; }
+int SetupCallbacks() {
+  int thid = 0;
+  thid = sceKernelCreateThread("update_thread",CallbackThread,0x11,0xFA0,0,0);
+  if(thid >= 0) sceKernelStartThread(thid, 0, 0);
+  return thid; }
 
 const char TITLE[] = "Neverball " VERSION;
 const char ICON[] = "icon/neverball.png";
@@ -378,6 +399,8 @@ static void make_dirs_and_migrate(void)
 
 int main(int argc, char *argv[])
 {
+    SetupCallbacks();
+
     SDL_Joystick *joy = NULL;
     int t1, t0, uniform;
 
