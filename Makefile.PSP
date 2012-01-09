@@ -1,0 +1,81 @@
+PSPSDK=$(shell psp-config --pspsdk-path)
+PSPDIR=$(shell psp-config --psp-prefix)
+TARGET = Neverball
+LIBS = -lphysfs -lpng -lz -ljpeg -lSDL -lSDL_ttf -lfreetype -lvorbisfile -lvorbis -logg -lGL -lGLU -lglut -lm -lpspaudio -lpspgu -lpspirkeyb -lpsppower -lpsphprm -lpsprtc -lpspvfpu -lc -lpsplibc
+CFLAGS = -O2 -Wall -I$(PSPDIR)/include/SDL -I./share
+
+OBJS =                \
+  share/lang.o        \
+	share/st_resol.o    \
+	share/vec3.o        \
+	share/base_image.o  \
+	share/image.o       \
+	share/solid.o       \
+	share/solid_gl.o    \
+	share/solid_phys.o  \
+	share/part.o        \
+	share/back.o        \
+	share/geom.o        \
+	share/item.o        \
+	share/ball.o        \
+	share/gui.o         \
+	share/base_config.o \
+	share/config.o      \
+	share/video.o       \
+	share/binary.o      \
+	share/state.o       \
+	share/audio.o       \
+	share/text.o        \
+	share/tilt.o        \
+	share/common.o      \
+	share/keynames.o    \
+	share/syswm.o       \
+	share/list.o        \
+	share/queue.o       \
+	share/cmd.o         \
+	share/array.o       \
+	share/dir.o         \
+	share/fs.o          \
+	share/fs_png.o      \
+	share/fs_jpg.o      \
+	share/fs_rwops.o    \
+	share/fs_ov.o       \
+	ball/hud.o          \
+	ball/game_common.o  \
+	ball/game_client.o  \
+	ball/game_server.o  \
+	ball/game_proxy.o   \
+	ball/score.o        \
+	ball/level.o        \
+	ball/progress.o     \
+	ball/set.o          \
+	ball/demo.o         \
+	ball/demo_dir.o     \
+	ball/util.o         \
+	ball/st_conf.o      \
+	ball/st_demo.o      \
+	ball/st_save.o      \
+	ball/st_goal.o      \
+	ball/st_fall_out.o  \
+	ball/st_time_out.o  \
+	ball/st_done.o      \
+	ball/st_level.o     \
+	ball/st_over.o      \
+	ball/st_play.o      \
+	ball/st_set.o       \
+	ball/st_start.o     \
+	ball/st_title.o     \
+	ball/st_help.o      \
+	ball/st_name.o      \
+	ball/st_shared.o    \
+	ball/st_pause.o     \
+	ball/st_ball.o      \
+	ball/main.o
+	
+PSP_FW_VERSION = 500
+BUILD_PRX = 0
+EXTRA_TARGETS = EBOOT.PBP
+PSP_EBOOT_TITLE = Neverball 1.5.4
+#PSP_EBOOT_ICON = icon0.png
+
+include $(PSPSDK)/lib/build.mak
