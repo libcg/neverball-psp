@@ -33,7 +33,7 @@ int video_init(const char *title, const char *icon)
     /* This has to happen before mode setting... */
 
     set_SDL_icon(icon);
-
+    
     /* Initialize the video. */
 
     if (!video_mode(config_get_d(CONFIG_FULLSCREEN),
@@ -86,7 +86,7 @@ int video_mode(int f, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,       stencil);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, buffers);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL,       vsync);
+    //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL,       vsync); FIXME
 
     /* Require 16-bit double buffer with 16-bit depth buffer. */
 

@@ -38,6 +38,7 @@
 #include "st_level.h"
 #include "st_pause.h"
 
+#ifdef __PSP__
 PSP_MODULE_INFO("Neverball", 0, 1, 1);
 PSP_HEAP_SIZE_KB(-4096);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
@@ -57,6 +58,7 @@ int SetupCallbacks() {
   thid = sceKernelCreateThread("update_thread",CallbackThread,0x11,0xFA0,0,0);
   if(thid >= 0) sceKernelStartThread(thid, 0, 0);
   return thid; }
+#endif
 
 const char TITLE[] = "Neverball " VERSION;
 const char ICON[] = "icon/neverball.png";
@@ -399,7 +401,12 @@ static void make_dirs_and_migrate(void)
 
 int main(int argc, char *argv[])
 {
+    #ifdef __PSP__
     SetupCallbacks();
+    sceKernelDelayThread(3000000);
+    #endif
+
+    printf("hello\n");
 
     SDL_Joystick *joy = NULL;
     int t1, t0, uniform;
@@ -410,13 +417,16 @@ int main(int argc, char *argv[])
                 fs_error());
         return 1;
     }
+    printf("fs\n");
 
     lang_init("neverball");
+    printf("lang\n");
 
     parse_args(argc, argv);
 
     config_paths(data_path);
     make_dirs_and_migrate();
+    printf("dir\n");
 
     /* Initialize SDL system and subsystems */
 
@@ -425,11 +435,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "%s\n", SDL_GetError());
         return 1;
     }
+    printf("SDL\n");
 
     /* Intitialize the configuration */
 
     config_init();
     config_load();
+    printf("config\n");
 
     /* Initialize the joystick. */
 
@@ -439,34 +451,42 @@ int main(int argc, char *argv[])
         if (joy)
             SDL_JoystickEventState(SDL_ENABLE);
     }
+    printf("joystick\n");
 
     /* Initialize the audio. */
 
     audio_init();
+    printf("audio\n");
     tilt_init();
+    printf("tilt\n");
 
     /* Initialize the video. */
 
     if (!video_init(TITLE, ICON))
         return 1;
+    printf("video\n");
 
     init_state(&st_null);
+    printf("state\n");
 
     /* Initialise demo playback. */
 
-    if (demo_path && fs_add_path(dir_name(demo_path)) &&
+    /*if (demo_path && fs_add_path(dir_name(demo_path)) &&
         progress_replay(base_name(demo_path, NULL)))
     {
         demo_play_goto(1);
         goto_state(&st_demo_play);
     }
-    else
-        goto_state(&st_title);
+    else*/
+        //goto_state(&st_title);
+    printf("state\n");
 
     /* Run the main game loop. */
 
     uniform = config_get_d(CONFIG_UNIFORM);
     t0 = SDL_GetTicks();
+
+    printf("then, loop\n");
 
     while (loop())
     {

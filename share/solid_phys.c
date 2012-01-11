@@ -13,6 +13,7 @@
  */
 
 #include <math.h>
+#include <malloc.h>
 
 #include "vec3.h"
 #include "geom.h" /* Only for height constants! */
