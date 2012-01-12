@@ -193,6 +193,7 @@ void video_swap(void)
     ticks  += dt;
     last   += dt;
 
+
     /* Average over 250ms. */
 
     if (ticks > 1000)

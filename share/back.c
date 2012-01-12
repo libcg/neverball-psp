@@ -40,9 +40,9 @@ void back_init(const char *s, int b)
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-    //back_list = glGenLists(1); FIXME
+    back_list = glGenLists(1);
 
-    //glNewList(back_list, GL_COMPILE); FIXME
+    glNewList(back_list, GL_COMPILE);
     {
         glBindTexture(GL_TEXTURE_2D, back_text);
 
@@ -58,7 +58,11 @@ void back_init(const char *s, int b)
             float s1 = fsinf(V_PI * (k1 - 0.5));
             float c1 = fcosf(V_PI * (k1 - 0.5));
 
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLE_STRIP);
+            #else
             glBegin(GL_QUAD_STRIP);
+            #endif
             {
                 for (j = 0; j <= slices; j++)
                 {
@@ -76,16 +80,16 @@ void back_init(const char *s, int b)
             glEnd();
         }
     }
-    //glEndList(); FIXME
+    glEndList();
 }
 
 void back_free(void)
 {
-    //if (glIsList(back_list)) FIXME
-        //glDeleteLists(back_list, 1);
+    if (glIsList(back_list))
+        glDeleteLists(back_list, 1);
 
-    //if (glIsTexture(back_text)) FIXME
-        //glDeleteTextures(1, &back_text);
+    if (glIsTexture(back_text))
+        glDeleteTextures(1, &back_text);
 
     back_list = 0;
     back_text = 0;
@@ -105,7 +109,7 @@ void back_draw(float t)
             glRotatef(dz, 0.f, 0.f, 1.f);
             glRotatef(dx, 1.f, 0.f, 0.f);
 
-            //glCallList(back_list); FIXME
+            glCallList(back_list);
         }
         glDepthMask(GL_TRUE);
         glEnable(GL_LIGHTING);

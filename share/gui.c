@@ -12,11 +12,6 @@
  * General Public License for more details.
  */
 
-/*
- * No GL list support on PSP :(
- * There's some crappy hacks to workaround this.
- */
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -122,9 +117,7 @@ static int gui_hot(int id)
 static GLuint gui_list(int x, int y,
                        int w, int h, const float *c0, const float *c1)
 {
-    #ifndef __PSP__
     GLuint list = glGenLists(1);
-    #endif
 
     GLfloat s0, t0;
     GLfloat s1, t1;
@@ -143,10 +136,33 @@ static GLuint gui_list(int x, int y,
     s1 = 1.0f - s0;
     t1 = 1.0f - t0;
 
-    #ifndef __PSP__
     glNewList(list, GL_COMPILE);
-    #endif
     {
+        #ifdef __PSP__ // No quad support
+        glBegin(GL_TRIANGLES);
+        {
+            glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
+            glTexCoord2f(s0, t1); glVertex2i(x      + d, y      - d);
+            glTexCoord2f(s1, t1); glVertex2i(x + ww + d, y      - d);
+            glTexCoord2f(s1, t0); glVertex2i(x + ww + d, y + hh - d);
+            glTexCoord2f(s0, t1); glVertex2i(x      + d, y      - d);
+            glTexCoord2f(s1, t0); glVertex2i(x + ww + d, y + hh - d);
+            glTexCoord2f(s0, t0); glVertex2i(x      + d, y + hh - d);
+
+            glColor4fv(c0);
+            glTexCoord2f(s0, t1); glVertex2i(x,      y);
+            glTexCoord2f(s1, t1); glVertex2i(x + ww, y);
+            glColor4fv(c1);
+            glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
+            
+            glColor4fv(c0);
+            glTexCoord2f(s0, t1); glVertex2i(x,      y);
+            glColor4fv(c1);
+            glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
+            glTexCoord2f(s0, t0); glVertex2i(x,      y + hh);
+        }
+        glEnd();
+        #else
         glBegin(GL_QUADS);
         {
             glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
@@ -164,13 +180,11 @@ static GLuint gui_list(int x, int y,
             glTexCoord2f(s0, t0); glVertex2i(x,      y + hh);
         }
         glEnd();
+        #endif
     }
-    #ifndef __PSP__
     glEndList();
+    
     return list;
-    #else
-    return 0;
-    #endif
 }
 
 /*
@@ -181,18 +195,18 @@ static GLuint gui_list(int x, int y,
 
 static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
 {
-    #ifndef __PSP__
     GLuint list = glGenLists(1);
-    #endif
 
     int n = 8;
     int i;
 
-    #ifndef __PSP__
     glNewList(list, GL_COMPILE);
-    #endif
     {
+        #ifdef __PSP__ // No quad support
+        glBegin(GL_TRIANGLE_STRIP);
+        #else
         glBegin(GL_QUAD_STRIP);
+        #endif
         {
             /* Left side... */
 
@@ -234,12 +248,9 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
         }
         glEnd();
     }
-    #ifndef __PSP__
     glEndList();
+    
     return list;
-    #else
-    return 0;
-    #endif
 }
 
 /*---------------------------------------------------------------------------*/
@@ -324,12 +335,11 @@ void gui_init(void)
                                                         &digit_w[i][j],
                                                         &digit_h[i][j],
                                                         text, font[i]);
-                #ifndef __PSP__
+                                                        
                 digit_list[i][j] = gui_list(-digit_w[i][j] / 2,
                                             -digit_h[i][j] / 2,
                                             +digit_w[i][j],
                                             +digit_h[i][j], c0, c1);
-                #endif
             }
 
             /* Draw the colon for the clock. */
@@ -338,12 +348,11 @@ void gui_init(void)
                                                     &digit_w[i][10],
                                                     &digit_h[i][10],
                                                     ":", font[i]);
-            #ifndef __PSP__
+                                                    
             digit_list[i][j] = gui_list(-digit_w[i][10] / 2,
                                         -digit_h[i][10] / 2,
                                         +digit_w[i][10],
                                         +digit_h[i][10], c0, c1);
-            #endif
         }
     }
 
@@ -361,12 +370,10 @@ void gui_free(void)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        #ifndef __PSP__
         if (glIsList(widget[id].text_obj))
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
             glDeleteLists(widget[id].rect_obj, 1);
-        #endif
 
         widget[id].type     = GUI_FREE;
         widget[id].text_img = 0;
@@ -384,10 +391,8 @@ void gui_free(void)
             if (glIsTexture(digit_text[i][j]))
                 glDeleteTextures(1, &digit_text[i][j]);
 
-            #ifndef __PSP__
             if (glIsList(digit_list[i][j]))
                 glDeleteLists(digit_list[i][j], 1);
-            #endif
         }
 
     /* Release all loaded fonts and finalize font rendering. */
@@ -572,10 +577,9 @@ void gui_set_label(int id, const char *text)
 
     if (glIsTexture(widget[id].text_img))
         glDeleteTextures(1, &widget[id].text_img);
-    #ifndef __PSP__
+        
     if (glIsList(widget[id].text_obj))
         glDeleteLists(widget[id].text_obj, 1);
-    #endif
 
     text = gui_truncate(text, widget[id].w - radius,
                         font[widget[id].size],
@@ -615,7 +619,7 @@ void gui_set_color(int id, const float *c0,
             widget[id].color0 = c0;
             widget[id].color1 = c1;
 
-            /*if (glIsList(widget[id].text_obj)) FIXME
+            if (glIsList(widget[id].text_obj))
             {
                 int w, h;
 
@@ -627,7 +631,7 @@ void gui_set_color(int id, const float *c0,
                 widget[id].text_obj = gui_list(-w / 2, -h / 2, w, h,
                                                widget[id].color0,
                                                widget[id].color1);
-            }*/
+            }
         }
     }
 }
@@ -1098,8 +1102,8 @@ static void gui_button_dn(int id, int x, int y, int w, int h)
 
     /* Create display lists for the text area and rounded rectangle. */
 
-    //widget[id].text_obj = gui_list(-W / 2, -H / 2, W, H, c0, c1); FIXME
-    //widget[id].rect_obj = gui_rect(-w / 2, -h / 2, w, h, R, radius); FIXME
+    widget[id].text_obj = gui_list(-W / 2, -H / 2, W, H, c0, c1);
+    widget[id].rect_obj = gui_rect(-w / 2, -h / 2, w, h, R, radius);
 }
 
 static void gui_widget_dn(int id, int x, int y, int w, int h)
@@ -1199,12 +1203,10 @@ int gui_delete(int id)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        #ifndef __PSP__
         if (glIsList(widget[id].text_obj))
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
             glDeleteLists(widget[id].rect_obj, 1);
-        #endif
 
         /* Mark this widget unused. */
 
@@ -1266,7 +1268,7 @@ static void gui_paint_rect(int id, int st)
                          (GLfloat) (widget[id].y + widget[id].h / 2), 0.f);
 
             glColor4fv(back[i]);
-            //glCallList(widget[id].rect_obj); FIXME
+            glCallList(widget[id].rect_obj);
         }
         glPopMatrix();
 
@@ -1315,7 +1317,7 @@ static void gui_paint_image(int id)
 
         glBindTexture(GL_TEXTURE_2D, widget[id].text_img);
         glColor4fv(gui_wht);
-        //glCallList(widget[id].rect_obj); FIXME
+        glCallList(widget[id].rect_obj);
     }
     glPopMatrix();
 }
@@ -1351,14 +1353,8 @@ static void gui_paint_count(int id)
             for (j = widget[id].value; j; j /= 10)
             {
                 glBindTexture(GL_TEXTURE_2D, digit_text[i][j % 10]);
-                #ifdef __PSP__
-                gui_list(-digit_w[i][j%10] / 2,
-                         -digit_h[i][j%10] / 2,
-                         +digit_w[i][j%10],
-                         +digit_h[i][j%10], gui_yel, gui_red);
-                #else
+                
                 glCallList(digit_list[i][j % 10]);
-                #endif
                 
                 glTranslatef((GLfloat) -digit_w[i][j % 10], 0.0f, 0.0f);
             }
@@ -1368,14 +1364,8 @@ static void gui_paint_count(int id)
             /* If the value is zero, just display a zero in place. */
 
             glBindTexture(GL_TEXTURE_2D, digit_text[i][0]);
-            #ifdef __PSP__
-            gui_list(-digit_w[i][0] / 2,
-                     -digit_h[i][0] / 2,
-                     +digit_w[i][0],
-                     +digit_h[i][0], gui_yel, gui_red);
-            #else
+
             glCallList(digit_list[i][0]);
-            #endif
         }
     }
     glPopMatrix();
@@ -1422,63 +1412,38 @@ static void gui_paint_clock(int id)
         if (mt > 0)
         {
             glBindTexture(GL_TEXTURE_2D, digit_text[i][mt]);
-            #ifdef __PSP__
-            gui_list(-digit_w[i][mt] / 2,
-                     -digit_h[i][mt] / 2,
-                     +digit_w[i][mt],
-                     +digit_h[i][mt], gui_yel, gui_red);
-            #else
+
             glCallList(digit_list[i][mt]);
-            #endif
+
             glTranslatef(dx_large, 0.0f, 0.0f);
         }
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][mo]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][mo] / 2,
-                 -digit_h[i][mo] / 2,
-                 +digit_w[i][mo],
-                 +digit_h[i][mo], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][mo]);
-        #endif
+
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the colon. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][10]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][10] / 2,
-                 -digit_h[i][10] / 2,
-                 +digit_w[i][10],
-                 +digit_h[i][10], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][10]);
-        #endif
+
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the seconds counter. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][st]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][st] / 2,
-                 -digit_h[i][st] / 2,
-                 +digit_w[i][st],
-                 +digit_h[i][st], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][st]);
-        #endif
+
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][so]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][so] / 2,
-                 -digit_h[i][so] / 2,
-                 +digit_w[i][so],
-                 +digit_h[i][so], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][so]);
-        #endif
+
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render hundredths counter half size. */
@@ -1486,25 +1451,14 @@ static void gui_paint_clock(int id)
         glScalef(0.5f, 0.5f, 1.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ht]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][ht] / 2,
-                 -digit_h[i][ht] / 2,
-                 +digit_w[i][ht],
-                 +digit_h[i][ht], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][ht]);
-        #endif
+
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ho]);
-        #ifdef __PSP__
-        gui_list(-digit_w[i][ho] / 2,
-                 -digit_h[i][ho] / 2,
-                 +digit_w[i][ho],
-                 +digit_h[i][ho], gui_yel, gui_red);
-        #else
+
         glCallList(digit_list[i][ho]);
-        #endif
     }
     glPopMatrix();
 }
@@ -1523,7 +1477,7 @@ static void gui_paint_label(int id)
                  widget[id].scale);
 
         glBindTexture(GL_TEXTURE_2D, widget[id].text_img);
-        //glCallList(widget[id].text_obj); FIXME
+        glCallList(widget[id].text_obj);
     }
     glPopMatrix();
 }

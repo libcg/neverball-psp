@@ -221,6 +221,7 @@ static const struct s_mtrl *sol_back_bill(const struct s_file *fp,
 
             mp = sol_draw_mtrl(fp, fp->mv + rp->mi, mp);
 
+            // TODO convert to triangles
             glBegin(GL_QUADS);
             {
                 glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, y0);
@@ -360,7 +361,7 @@ static void sol_draw_list(const struct s_file *fp,
 
         /* Draw the body. */
 
-        //glCallList(list); FIXME
+        glCallList(list);
     }
     glPopMatrix();
 }
@@ -419,6 +420,7 @@ void sol_bill(const struct s_file *fp, const float *M, float t)
             if (fabsf(ry) > 0.0f) glRotatef(ry, 0.0f, 1.0f, 0.0f);
             if (fabsf(rz) > 0.0f) glRotatef(rz, 0.0f, 0.0f, 1.0f);
 
+            // TODO convert to triangles
             glBegin(GL_QUADS);
             {
                 glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, -h / 2);
@@ -529,7 +531,7 @@ static void sol_shad_list(const struct s_file *fp,
 
         /* Draw the body. */
 
-        //glCallList(list); FIXME
+        glCallList(list);
 
         /* Pop the shadow translation. */
 
@@ -578,9 +580,9 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (on)
         {
-            //fp->bv[i].ol = glGenLists(1); FIXME
+            fp->bv[i].ol = glGenLists(1);
 
-            //glNewList(fp->bv[i].ol, GL_COMPILE); FIXME
+            glNewList(fp->bv[i].ol, GL_COMPILE);
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
@@ -588,7 +590,7 @@ static void sol_load_objects(struct s_file *fp, int s)
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_OPAQUE, M_DECAL);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            //glEndList(); FIXME
+            glEndList();
         }
         else fp->bv[i].ol = 0;
 
@@ -596,9 +598,9 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (tn)
         {
-            //fp->bv[i].tl = glGenLists(1); FIXME
+            fp->bv[i].tl = glGenLists(1);
 
-            //glNewList(fp->bv[i].tl, GL_COMPILE); FIXME
+            glNewList(fp->bv[i].tl, GL_COMPILE);
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
@@ -606,7 +608,7 @@ static void sol_load_objects(struct s_file *fp, int s)
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_TRANSPARENT, 0);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            //glEndList(); FIXME
+            glEndList();
         }
         else fp->bv[i].tl = 0;
 
@@ -614,16 +616,16 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (rn)
         {
-            //fp->bv[i].rl = glGenLists(1); FIXME
+            fp->bv[i].rl = glGenLists(1);
 
-            //glNewList(fp->bv[i].rl, GL_COMPILE); FIXME
+            glNewList(fp->bv[i].rl, GL_COMPILE);
             {
                 const struct s_mtrl *mp = &default_mtrl;
 
                 mp = sol_draw_body(fp, fp->bv + i, mp, M_REFLECTIVE, 0);
                 mp = sol_draw_mtrl(fp, &default_mtrl, mp);
             }
-            //glEndList(); FIXME
+            glEndList();
         }
         else fp->bv[i].rl = 0;
 
@@ -631,15 +633,15 @@ static void sol_load_objects(struct s_file *fp, int s)
 
         if (s && (on || rn))
         {
-            //fp->bv[i].sl = glGenLists(1); FIXME
+            fp->bv[i].sl = glGenLists(1);
 
-            //glNewList(fp->bv[i].sl, GL_COMPILE); FIXME
+            glNewList(fp->bv[i].sl, GL_COMPILE);
             {
                 if (on) sol_shad_body(fp, fp->bv + i, M_OPAQUE, 0);
                 if (rn) sol_shad_body(fp, fp->bv + i, M_REFLECTIVE, 0);
                 if (dn) sol_shad_body(fp, fp->bv + i, M_OPAQUE, M_DECAL);
             }
-            //glEndList(); FIXME
+            glEndList();
         }
         else fp->bv[i].sl = 0;
     }
@@ -721,12 +723,12 @@ void sol_free_gl(struct s_file *fp)
 
     for (i = 0; i < fp->bc; i++)
     {
-        /*if (glIsList(fp->bv[i].ol)) FIXME
+        if (glIsList(fp->bv[i].ol))
             glDeleteLists(fp->bv[i].ol, 1);
         if (glIsList(fp->bv[i].tl))
             glDeleteLists(fp->bv[i].tl, 1);
         if (glIsList(fp->bv[i].rl))
-            glDeleteLists(fp->bv[i].rl, 1);*/
+            glDeleteLists(fp->bv[i].rl, 1);
     }
 
     sol_free(fp);

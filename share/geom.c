@@ -36,9 +36,9 @@ void mark_init(int b)
 {
     int i, slices = b ? 32 : 16;
 
-    //mark_list = glGenLists(1); FIXME
+    mark_list = glGenLists(1);
 
-    //glNewList(mark_list, GL_COMPILE); FIXME
+    glNewList(mark_list, GL_COMPILE);
     {
         glBegin(GL_TRIANGLE_FAN);
         {
@@ -54,7 +54,7 @@ void mark_init(int b)
         }
         glEnd();
     }
-    //glEndList(); FIXME
+    glEndList();
 }
 
 void mark_draw(void)
@@ -63,7 +63,7 @@ void mark_draw(void)
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_FALSE);
     {
-        //glCallList(mark_list); FIXME
+        glCallList(mark_list);
     }
     glDepthMask(GL_TRUE);
     glEnable(GL_TEXTURE_2D);
@@ -72,8 +72,8 @@ void mark_draw(void)
 
 void mark_free(void)
 {
-    //if (glIsList(mark_list))
-        //glDeleteLists(mark_list, 1); FIXME
+    if (glIsList(mark_list))
+        glDeleteLists(mark_list, 1);
 
     mark_list = 0;
 }
@@ -86,11 +86,15 @@ void goal_init(int b)
 {
     int i, n = b ? 32 : 8;
 
-    //goal_list = glGenLists(1); FIXME
+    goal_list = glGenLists(1);
 
-    //glNewList(goal_list, GL_COMPILE); FIXME
+    glNewList(goal_list, GL_COMPILE);
     {
+        #ifdef __PSP__
+        glBegin(GL_TRIANGLE_STRIP);
+        #else
         glBegin(GL_QUAD_STRIP);
+        #endif
         {
             for (i = 0; i <= n; i++)
             {
@@ -106,20 +110,20 @@ void goal_init(int b)
         }
         glEnd();
     }
-    //glEndList(); FIXME
+    glEndList();
 }
 
 void goal_free(void)
 {
-    //if (glIsList(goal_list))
-        //glDeleteLists(goal_list, 1); FIXME
+    if (glIsList(goal_list))
+        glDeleteLists(goal_list, 1);
 
     goal_list = 0;
 }
 
 void goal_draw(void)
 {
-    //glCallList(goal_list); FIXME
+    glCallList(goal_list);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -130,13 +134,17 @@ void jump_init(int b)
 {
     int k, i, n = b ? 32 : 8;
 
-    //jump_list = glGenLists(2); FIXME
+    jump_list = glGenLists(2);
 
     for (k = 0; k < 2; k++)
     {
-        //glNewList(jump_list + k, GL_COMPILE); FIXME
+        glNewList(jump_list + k, GL_COMPILE);
         {
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLE_STRIP);
+            #else
             glBegin(GL_QUAD_STRIP);
+            #endif
             {
                 for (i = 0; i <= n; i++)
                 {
@@ -152,19 +160,19 @@ void jump_init(int b)
             }
             glEnd();
         }
-        //glEndList(); FIXME
+        glEndList();
     }
 }
 
 void jump_free(void)
 {
-    //glDeleteLists(jump_list, 2); FIXME
+    glDeleteLists(jump_list, 2);
     jump_list = 0;
 }
 
 void jump_draw(int highlight)
 {
-    //glCallList(jump_list + highlight); FIXME
+    glCallList(jump_list + highlight);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -185,15 +193,19 @@ void swch_init(int b)
 {
     int k, i, n = b ? 32 : 8;
 
-    //swch_list = glGenLists(4); FIXME
+    swch_list = glGenLists(4);
 
     /* Create the display lists. */
 
     for (k = 0; k < 4; k++)
     {
-        //glNewList(swch_list + k, GL_COMPILE); FIXME
+        glNewList(swch_list + k, GL_COMPILE);
         {
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLE_STRIP);
+            #else
             glBegin(GL_QUAD_STRIP);
+            #endif
             {
                 for (i = 0; i <= n; i++)
                 {
@@ -209,21 +221,21 @@ void swch_init(int b)
             }
             glEnd();
         }
-        //glEndList(); FIXME
+        glEndList();
     }
 }
 
 void swch_free(void)
 {
-    //if (glIsList(swch_list))
-        //glDeleteLists(swch_list, 2); FIXME
+    if (glIsList(swch_list))
+        glDeleteLists(swch_list, 2);
 
     swch_list = 0;
 }
 
 void swch_draw(int b, int e)
 {
-    //glCallList(swch_list + b * 2 + e); FIXME
+    glCallList(swch_list + b * 2 + e);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -234,9 +246,9 @@ void flag_init(int b)
 {
     int i, n = b ? 8 : 4;
 
-    //flag_list = glGenLists(1); FIXME
+    flag_list = glGenLists(1);
 
-    //glNewList(flag_list, GL_COMPILE); FIXME
+    glNewList(flag_list, GL_COMPILE);
     {
         //glEnable(GL_COLOR_MATERIAL); FIXME
         glDisable(GL_LIGHTING);
@@ -256,7 +268,11 @@ void flag_init(int b)
             }
             glEnd();
 
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLE_STRIP);
+            #else
             glBegin(GL_QUAD_STRIP);
+            #endif
             {
                 for (i = 0; i <= n; i++)
                 {
@@ -274,20 +290,20 @@ void flag_init(int b)
         glEnable(GL_LIGHTING);
         //glDisable(GL_COLOR_MATERIAL); FIXME
     }
-    //glEndList(); FIXME
+    glEndList();
 }
 
 void flag_free(void)
 {
-    //if (glIsList(flag_list))
-        //glDeleteLists(flag_list, 1); FIXME
+    if (glIsList(flag_list))
+        glDeleteLists(flag_list, 1);
 
     flag_list = 0;
 }
 
 void flag_draw(void)
 {
-    //glCallList(flag_list); FIXME
+    glCallList(flag_list);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -372,6 +388,18 @@ void fade_draw(float k)
 
             glColor4f(0.0f, 0.0f, 0.0f, k);
 
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLES);
+            {
+                glVertex2i(0, 0);
+                glVertex2i(w, 0);
+                glVertex2i(w, h);
+                glVertex2i(0, 0);
+                glVertex2i(w, h);
+                glVertex2i(0, h);
+            }
+            glEnd();
+            #else
             glBegin(GL_QUADS);
             {
                 glVertex2i(0, 0);
@@ -380,6 +408,7 @@ void fade_draw(float k)
                 glVertex2i(0, h);
             }
             glEnd();
+            #endif
 
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
