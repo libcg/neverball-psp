@@ -84,18 +84,11 @@ void config_paths(const char *arg_data_path)
 
     /* Set up directory for writing, create if needed. */
 
-    #ifdef __PSP__
-    if (fs_mkdir(CONFIG_USER))
-    {
-      fs_set_write_dir(user);
-    }
-    #else
     if (!fs_set_write_dir(user))
     {
         if (fs_set_write_dir(home) && fs_mkdir(CONFIG_USER))
             fs_set_write_dir(user);
     }
-    #endif
 
     fs_add_path_with_archives(user);
 

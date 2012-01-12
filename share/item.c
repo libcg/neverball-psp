@@ -96,7 +96,7 @@ void item_free(void)
 
 void item_push(int type)
 {
-    glEnable(GL_COLOR_MATERIAL);
+    //glEnable(GL_COLOR_MATERIAL); FIXME
 }
 
 void item_draw(const struct s_item *hp, float r)
@@ -120,7 +120,7 @@ void item_draw(const struct s_item *hp, float r)
 void item_pull(void)
 {
     glColor3f(1.0f, 1.0f, 1.0f);
-    glDisable(GL_COLOR_MATERIAL);
+    //glDisable(GL_COLOR_MATERIAL); FIXME
 }
 
 /*---------------------------------------------------------------------------*/

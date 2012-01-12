@@ -403,7 +403,7 @@ int main(int argc, char *argv[])
 {
     #ifdef __PSP__
     SetupCallbacks();
-    sceKernelDelayThread(3000000);
+    sceKernelDelayThread(3000000); // FIXME
     #endif
 
     printf("hello\n");
@@ -467,18 +467,18 @@ int main(int argc, char *argv[])
     printf("video\n");
 
     init_state(&st_null);
-    printf("state\n");
+    printf("initstate\n");
 
     /* Initialise demo playback. */
 
-    /*if (demo_path && fs_add_path(dir_name(demo_path)) &&
+    if (demo_path && fs_add_path(dir_name(demo_path)) &&
         progress_replay(base_name(demo_path, NULL)))
     {
         demo_play_goto(1);
         goto_state(&st_demo_play);
     }
-    else*/
-        //goto_state(&st_title);
+    else
+        goto_state(&st_title);
     printf("state\n");
 
     /* Run the main game loop. */

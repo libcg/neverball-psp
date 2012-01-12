@@ -59,7 +59,7 @@ void mark_init(int b)
 
 void mark_draw(void)
 {
-    glEnable(GL_COLOR_MATERIAL);
+    //glEnable(GL_COLOR_MATERIAL); FIXME
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_FALSE);
     {
@@ -67,7 +67,7 @@ void mark_draw(void)
     }
     glDepthMask(GL_TRUE);
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_COLOR_MATERIAL);
+    //glDisable(GL_COLOR_MATERIAL); FIXME
 }
 
 void mark_free(void)
@@ -238,7 +238,7 @@ void flag_init(int b)
 
     //glNewList(flag_list, GL_COMPILE); FIXME
     {
-        glEnable(GL_COLOR_MATERIAL);
+        //glEnable(GL_COLOR_MATERIAL); FIXME
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         {
@@ -272,7 +272,7 @@ void flag_init(int b)
         }
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_LIGHTING);
-        glDisable(GL_COLOR_MATERIAL);
+        //glDisable(GL_COLOR_MATERIAL); FIXME
     }
     //glEndList(); FIXME
 }
@@ -339,7 +339,7 @@ void shad_draw_set(const float *p, float r)
     glMatrixMode(GL_MODELVIEW);
 
     if (config_get_d(CONFIG_SHADOW) != 3)
-        glEnable(GL_CLIP_PLANE3);
+        ;//glEnable(GL_CLIP_PLANE3); FIXME
 }
 
 void shad_draw_clr(void)
@@ -351,7 +351,7 @@ void shad_draw_clr(void)
     glMatrixMode(GL_MODELVIEW);
 
     if (config_get_d(CONFIG_SHADOW) != 3)
-        glDisable(GL_CLIP_PLANE3);
+        ;//glDisable(GL_CLIP_PLANE3); FIXME
 }
 
 /*---------------------------------------------------------------------------*/
@@ -365,7 +365,7 @@ void fade_draw(float k)
 
         video_push_ortho();
         {
-            glEnable(GL_COLOR_MATERIAL);
+            //glEnable(GL_COLOR_MATERIAL); FIXME
             glDisable(GL_LIGHTING);
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_TEXTURE_2D);
@@ -386,7 +386,7 @@ void fade_draw(float k)
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
-            glDisable(GL_COLOR_MATERIAL);
+            //glDisable(GL_COLOR_MATERIAL); FIXME
         }
         video_pop_matrix();
     }

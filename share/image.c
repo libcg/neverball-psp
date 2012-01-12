@@ -114,7 +114,12 @@ static GLuint make_texture(const void *p, int w, int h, int b)
     int a = config_get_d(CONFIG_ANISO);
 #endif
     int m = config_get_d(CONFIG_MIPMAP);
-    int k = config_get_d(CONFIG_TEXTURES);
+    int k =
+    #ifdef __PSP__
+      1; // Otherwise it is 0 ???
+    #else
+      config_get_d(CONFIG_TEXTURES);
+    #endif
     int W = w;
     int H = h;
 

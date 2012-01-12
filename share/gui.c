@@ -12,6 +12,11 @@
  * General Public License for more details.
  */
 
+/*
+ * No GL list support on PSP :(
+ * There's some crappy hacks to workaround this.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -117,7 +122,9 @@ static int gui_hot(int id)
 static GLuint gui_list(int x, int y,
                        int w, int h, const float *c0, const float *c1)
 {
-    GLuint list = 0; //glGenLists(1); FIXME
+    #ifndef __PSP__
+    GLuint list = glGenLists(1);
+    #endif
 
     GLfloat s0, t0;
     GLfloat s1, t1;
@@ -136,7 +143,9 @@ static GLuint gui_list(int x, int y,
     s1 = 1.0f - s0;
     t1 = 1.0f - t0;
 
-    //glNewList(list, GL_COMPILE); FIXME
+    #ifndef __PSP__
+    glNewList(list, GL_COMPILE);
+    #endif
     {
         glBegin(GL_QUADS);
         {
@@ -156,9 +165,12 @@ static GLuint gui_list(int x, int y,
         }
         glEnd();
     }
-    //glEndList(); FIXME
-
+    #ifndef __PSP__
+    glEndList();
     return list;
+    #else
+    return 0;
+    #endif
 }
 
 /*
@@ -169,12 +181,16 @@ static GLuint gui_list(int x, int y,
 
 static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
 {
-    GLuint list = 0; // = glGenLists(1); FIXME
+    #ifndef __PSP__
+    GLuint list = glGenLists(1);
+    #endif
 
     int n = 8;
     int i;
 
-    //glNewList(list, GL_COMPILE); FIXME
+    #ifndef __PSP__
+    glNewList(list, GL_COMPILE);
+    #endif
     {
         glBegin(GL_QUAD_STRIP);
         {
@@ -218,9 +234,12 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
         }
         glEnd();
     }
-    //glEndList(); FIXME
-
+    #ifndef __PSP__
+    glEndList();
     return list;
+    #else
+    return 0;
+    #endif
 }
 
 /*---------------------------------------------------------------------------*/
@@ -305,10 +324,12 @@ void gui_init(void)
                                                         &digit_w[i][j],
                                                         &digit_h[i][j],
                                                         text, font[i]);
+                #ifndef __PSP__
                 digit_list[i][j] = gui_list(-digit_w[i][j] / 2,
                                             -digit_h[i][j] / 2,
                                             +digit_w[i][j],
                                             +digit_h[i][j], c0, c1);
+                #endif
             }
 
             /* Draw the colon for the clock. */
@@ -317,10 +338,12 @@ void gui_init(void)
                                                     &digit_w[i][10],
                                                     &digit_h[i][10],
                                                     ":", font[i]);
+            #ifndef __PSP__
             digit_list[i][j] = gui_list(-digit_w[i][10] / 2,
                                         -digit_h[i][10] / 2,
                                         +digit_w[i][10],
                                         +digit_h[i][10], c0, c1);
+            #endif
         }
     }
 
@@ -338,10 +361,12 @@ void gui_free(void)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        /*if (glIsList(widget[id].text_obj)) FIXME
+        #ifndef __PSP__
+        if (glIsList(widget[id].text_obj))
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
-            glDeleteLists(widget[id].rect_obj, 1);*/
+            glDeleteLists(widget[id].rect_obj, 1);
+        #endif
 
         widget[id].type     = GUI_FREE;
         widget[id].text_img = 0;
@@ -359,8 +384,10 @@ void gui_free(void)
             if (glIsTexture(digit_text[i][j]))
                 glDeleteTextures(1, &digit_text[i][j]);
 
-            /*if (glIsList(digit_list[i][j])) FIXME
-                glDeleteLists(digit_list[i][j], 1);*/
+            #ifndef __PSP__
+            if (glIsList(digit_list[i][j]))
+                glDeleteLists(digit_list[i][j], 1);
+            #endif
         }
 
     /* Release all loaded fonts and finalize font rendering. */
@@ -545,8 +572,10 @@ void gui_set_label(int id, const char *text)
 
     if (glIsTexture(widget[id].text_img))
         glDeleteTextures(1, &widget[id].text_img);
-    /*if (glIsList(widget[id].text_obj)) FIXME
-        glDeleteLists(widget[id].text_obj, 1);*/
+    #ifndef __PSP__
+    if (glIsList(widget[id].text_obj))
+        glDeleteLists(widget[id].text_obj, 1);
+    #endif
 
     text = gui_truncate(text, widget[id].w - radius,
                         font[widget[id].size],
@@ -1069,8 +1098,8 @@ static void gui_button_dn(int id, int x, int y, int w, int h)
 
     /* Create display lists for the text area and rounded rectangle. */
 
-    widget[id].text_obj = gui_list(-W / 2, -H / 2, W, H, c0, c1);
-    widget[id].rect_obj = gui_rect(-w / 2, -h / 2, w, h, R, radius);
+    //widget[id].text_obj = gui_list(-W / 2, -H / 2, W, H, c0, c1); FIXME
+    //widget[id].rect_obj = gui_rect(-w / 2, -h / 2, w, h, R, radius); FIXME
 }
 
 static void gui_widget_dn(int id, int x, int y, int w, int h)
@@ -1170,10 +1199,12 @@ int gui_delete(int id)
         if (glIsTexture(widget[id].text_img))
             glDeleteTextures(1, &widget[id].text_img);
 
-        /*if (glIsList(widget[id].text_obj)) FIXME
+        #ifndef __PSP__
+        if (glIsList(widget[id].text_obj))
             glDeleteLists(widget[id].text_obj, 1);
         if (glIsList(widget[id].rect_obj))
-            glDeleteLists(widget[id].rect_obj, 1);*/
+            glDeleteLists(widget[id].rect_obj, 1);
+        #endif
 
         /* Mark this widget unused. */
 
@@ -1320,7 +1351,15 @@ static void gui_paint_count(int id)
             for (j = widget[id].value; j; j /= 10)
             {
                 glBindTexture(GL_TEXTURE_2D, digit_text[i][j % 10]);
-                //glCallList(digit_list[i][j % 10]); FIXME
+                #ifdef __PSP__
+                gui_list(-digit_w[i][j%10] / 2,
+                         -digit_h[i][j%10] / 2,
+                         +digit_w[i][j%10],
+                         +digit_h[i][j%10], gui_yel, gui_red);
+                #else
+                glCallList(digit_list[i][j % 10]);
+                #endif
+                
                 glTranslatef((GLfloat) -digit_w[i][j % 10], 0.0f, 0.0f);
             }
         }
@@ -1329,7 +1368,14 @@ static void gui_paint_count(int id)
             /* If the value is zero, just display a zero in place. */
 
             glBindTexture(GL_TEXTURE_2D, digit_text[i][0]);
-            //glCallList(digit_list[i][0]); FIXME
+            #ifdef __PSP__
+            gui_list(-digit_w[i][0] / 2,
+                     -digit_h[i][0] / 2,
+                     +digit_w[i][0],
+                     +digit_h[i][0], gui_yel, gui_red);
+            #else
+            glCallList(digit_list[i][0]);
+            #endif
         }
     }
     glPopMatrix();
@@ -1376,28 +1422,63 @@ static void gui_paint_clock(int id)
         if (mt > 0)
         {
             glBindTexture(GL_TEXTURE_2D, digit_text[i][mt]);
-            //glCallList(digit_list[i][mt]); FIXME
+            #ifdef __PSP__
+            gui_list(-digit_w[i][mt] / 2,
+                     -digit_h[i][mt] / 2,
+                     +digit_w[i][mt],
+                     +digit_h[i][mt], gui_yel, gui_red);
+            #else
+            glCallList(digit_list[i][mt]);
+            #endif
             glTranslatef(dx_large, 0.0f, 0.0f);
         }
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][mo]);
-        //glCallList(digit_list[i][mo]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][mo] / 2,
+                 -digit_h[i][mo] / 2,
+                 +digit_w[i][mo],
+                 +digit_h[i][mo], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][mo]);
+        #endif
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the colon. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][10]);
-        //glCallList(digit_list[i][10]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][10] / 2,
+                 -digit_h[i][10] / 2,
+                 +digit_w[i][10],
+                 +digit_h[i][10], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][10]);
+        #endif
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render the seconds counter. */
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][st]);
-        //glCallList(digit_list[i][st]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][st] / 2,
+                 -digit_h[i][st] / 2,
+                 +digit_w[i][st],
+                 +digit_h[i][st], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][st]);
+        #endif
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][so]);
-        //glCallList(digit_list[i][so]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][so] / 2,
+                 -digit_h[i][so] / 2,
+                 +digit_w[i][so],
+                 +digit_h[i][so], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][so]);
+        #endif
         glTranslatef(dx_small, 0.0f, 0.0f);
 
         /* Render hundredths counter half size. */
@@ -1405,11 +1486,25 @@ static void gui_paint_clock(int id)
         glScalef(0.5f, 0.5f, 1.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ht]);
-        //glCallList(digit_list[i][ht]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][ht] / 2,
+                 -digit_h[i][ht] / 2,
+                 +digit_w[i][ht],
+                 +digit_h[i][ht], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][ht]);
+        #endif
         glTranslatef(dx_large, 0.0f, 0.0f);
 
         glBindTexture(GL_TEXTURE_2D, digit_text[i][ho]);
-        //glCallList(digit_list[i][ho]); FIXME
+        #ifdef __PSP__
+        gui_list(-digit_w[i][ho] / 2,
+                 -digit_h[i][ho] / 2,
+                 +digit_w[i][ho],
+                 +digit_h[i][ho], gui_yel, gui_red);
+        #else
+        glCallList(digit_list[i][ho]);
+        #endif
     }
     glPopMatrix();
 }
@@ -1456,7 +1551,7 @@ void gui_paint(int id)
     {
         video_push_ortho();
         {
-            glEnable(GL_COLOR_MATERIAL);
+            //glEnable(GL_COLOR_MATERIAL); FIXME
             glDisable(GL_LIGHTING);
             glDisable(GL_DEPTH_TEST);
             {
@@ -1470,7 +1565,7 @@ void gui_paint(int id)
             }
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
-            glDisable(GL_COLOR_MATERIAL);
+            //glDisable(GL_COLOR_MATERIAL); FIXME
         }
         video_pop_matrix();
     }

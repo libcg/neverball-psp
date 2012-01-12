@@ -287,13 +287,13 @@ static void ball_pass_inner(const float *ball_M,
 
     if      (inner_flags & F_DRAWCLIP)
     {
-        glEnable(GL_CLIP_PLANE1);
+        //glEnable(GL_CLIP_PLANE1); FIXME
         ball_draw_inner(        pend_M, bill_M,              pend_bill_M, t);
-        glDisable(GL_CLIP_PLANE1);
+        //glDisable(GL_CLIP_PLANE1); FIXME
 
-        glEnable(GL_CLIP_PLANE2);
+        //glEnable(GL_CLIP_PLANE2); FIXME
         ball_draw_inner(        pend_M, bill_M,              pend_bill_M, t);
-        glDisable(GL_CLIP_PLANE2);
+        //glDisable(GL_CLIP_PLANE2); FIXME
     }
 
     /* Sort the inner ball using face culling. */
@@ -324,15 +324,15 @@ static void ball_pass_solid(const float *ball_M,
 
     if      (solid_flags & F_DRAWCLIP)
     {
-        glEnable(GL_CLIP_PLANE1);
+        //glEnable(GL_CLIP_PLANE1); FIXME
         ball_draw_solid(ball_M,                 ball_bill_M, t);
-        glDisable(GL_CLIP_PLANE1);
+        //glDisable(GL_CLIP_PLANE1); FIXME
 
         ball_pass_inner(ball_M, pend_M, bill_M, ball_bill_M, pend_bill_M, t);
 
-        glEnable(GL_CLIP_PLANE2);
+        //glEnable(GL_CLIP_PLANE2); FIXME
         ball_draw_solid(ball_M,                 ball_bill_M, t);
-        glDisable(GL_CLIP_PLANE2);
+        //glDisable(GL_CLIP_PLANE2); FIXME
     }
 
     /* Sort the solid ball with the inner ball using face culling. */
@@ -366,15 +366,15 @@ static void ball_pass_outer(const float *ball_M,
 
     if      (outer_flags & F_DRAWCLIP)
     {
-        glEnable(GL_CLIP_PLANE1);
+        //glEnable(GL_CLIP_PLANE1); FIXME
         ball_draw_outer(        pend_M, bill_M,              pend_bill_M, t);
-        glDisable(GL_CLIP_PLANE1);
+        //glDisable(GL_CLIP_PLANE1); FIXME
 
         ball_pass_solid(ball_M, pend_M, bill_M, ball_bill_M, pend_bill_M, t);
 
-        glEnable(GL_CLIP_PLANE2);
+        //glEnable(GL_CLIP_PLANE2); FIXME
         ball_draw_outer(        pend_M, bill_M,              pend_bill_M, t);
-        glDisable(GL_CLIP_PLANE2);
+        //glDisable(GL_CLIP_PLANE2); FIXME
     }
 
     /* Sort the outer ball with the solid ball using face culling. */

@@ -882,7 +882,7 @@ static void game_draw_fore(int pose, const float *M, int d, float t)
         game_clip_ball(d, ball_p);
 
         if (d < 0)
-            glEnable(GL_CLIP_PLANE0);
+            ;//glEnable(GL_CLIP_PLANE0); FIXME
 
         switch (pose)
         {
@@ -921,7 +921,7 @@ static void game_draw_fore(int pose, const float *M, int d, float t)
 
         /* Draw the particles and light columns. */
 
-        glEnable(GL_COLOR_MATERIAL);
+        //glEnable(GL_COLOR_MATERIAL); FIXME
         glDisable(GL_LIGHTING);
         glDepthMask(GL_FALSE);
         {
@@ -942,7 +942,7 @@ static void game_draw_fore(int pose, const float *M, int d, float t)
         }
         glDepthMask(GL_TRUE);
         glEnable(GL_LIGHTING);
-        glDisable(GL_COLOR_MATERIAL);
+        //glDisable(GL_COLOR_MATERIAL); FIXME
 
         if (d < 0)
             glDisable(GL_CLIP_PLANE0);
@@ -1052,13 +1052,13 @@ void game_draw(int pose, float t)
                      * through.)
                      */
 
-                    glEnable(GL_COLOR_MATERIAL);
+                    //glEnable(GL_COLOR_MATERIAL); FIXME
                     {
                         glColor4f(0.0, 0.0, 0.05, 1.0);
                         game_refl_all();
                         glColor4f(1.0,  1.0,  1.0,  1.0);
                     }
-                    glDisable(GL_COLOR_MATERIAL);
+                    //glDisable(GL_COLOR_MATERIAL); FIXME
 
                     game_refl_all();
                 }

@@ -105,7 +105,7 @@ int video_mode(int f, int w, int h)
         config_set_d(CONFIG_HEIGHT,     h);
 
         glViewport(0, 0, w, h);
-        glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 0.0f); // FIXME 0.0 0.0 0.1 0.0
 
         glEnable(GL_NORMALIZE);
         glEnable(GL_CULL_FACE);
@@ -207,6 +207,7 @@ void video_swap(void)
 
         fps = (int) ((c - k < k - f) ? c : f);
         ms  = (float) ticks / (float) frames;
+        printf("%d fps (%g ms)\n",fps,ms); // FIXME
 
         /* Reset the counters for the next update. */
 
