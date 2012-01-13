@@ -828,7 +828,7 @@ static void game_clip_ball(int d, const float *p)
     pz[1] = view_p[1] - c[1];
     pz[2] = view_p[2] - c[2];
 
-    r = sqrt(pz[0] * pz[0] + pz[1] * pz[1] + pz[2] * pz[2]);
+    r = sqrtf(pz[0] * pz[0] + pz[1] * pz[1] + pz[2] * pz[2]);
 
     pz[0] /= r;
     pz[1] /= r;
@@ -1084,9 +1084,14 @@ void game_draw(int pose, float t)
 
 void game_look(float phi, float theta)
 {
-    view_c[0] = view_p[0] + fsinf(V_RAD(theta)) * fcosf(V_RAD(phi));
-    view_c[1] = view_p[1] +                       fsinf(V_RAD(phi));
-    view_c[2] = view_p[2] - fcosf(V_RAD(theta)) * fcosf(V_RAD(phi));
+    float sin_theta, cos_theta, sin_phi, cos_phi;
+    
+    fsincosf(V_RAD(theta), &sin_theta, &cos_theta);
+    fsincosf(V_RAD(phi), &sin_phi, &cos_phi);
+    
+    view_c[0] = view_p[0] + sin_theta * cos_phi;
+    view_c[1] = view_p[1] +             sin_phi;
+    view_c[2] = view_p[2] - cos_theta * cos_phi;
 }
 
 /*---------------------------------------------------------------------------*/

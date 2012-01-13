@@ -46,8 +46,8 @@ void mark_init(int b)
 
             for (i = 0; i < slices; i++)
             {
-                float x = fcosf(-2.f * PI * i / slices);
-                float y = fsinf(-2.f * PI * i / slices);
+                float x, y;
+                fsincosf(-2.f * PI * i / slices, &x, &y);
 
                 glVertex3f(x, 0, y);
             }
@@ -98,9 +98,9 @@ void goal_init(int b)
         {
             for (i = 0; i <= n; i++)
             {
-                float x = fcosf(2.f * PI * i / n);
-                float y = fsinf(2.f * PI * i / n);
-
+                float x, y;
+                fsincosf(2.f * PI * i / n, &x, &y);
+               
                 glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
                 glVertex3f(x, 0.0f, y);
 
@@ -148,9 +148,9 @@ void jump_init(int b)
             {
                 for (i = 0; i <= n; i++)
                 {
-                    float x = fcosf(2.f * PI * i / n);
-                    float y = fsinf(2.f * PI * i / n);
-
+                    float x, y;
+                    fsincosf(2.f * PI * i / n, &x, &y);
+                    
                     glColor4f(0.75f, 0.5f, 1.0f, (k == 0 ? 0.5f : 0.8f));
                     glVertex3f(x, 0.0f, y);
 
@@ -209,8 +209,8 @@ void swch_init(int b)
             {
                 for (i = 0; i <= n; i++)
                 {
-                    float x = fcosf(2.f * PI * i / n);
-                    float y = fsinf(2.f * PI * i / n);
+                    float x, y;
+                    fsincosf(2.f * PI * i / n, &x, &y);
 
                     glColor4fv(swch_colors[2 * k + 0]);
                     glVertex3f(x, 0.0f, y);
@@ -276,8 +276,10 @@ void flag_init(int b)
             {
                 for (i = 0; i <= n; i++)
                 {
-                    float x = fcosf(2.f * PI * i / n) * 0.01f;
-                    float y = fsinf(2.f * PI * i / n) * 0.01f;
+                    float x, y;
+                    fsincosf(2.f * PI * i / n, &x, &y);
+                    x *= 0.01f;
+                    y *= 0.01f;
 
                     glColor3f(1.0f, 1.0f, 1.0f);
                     glVertex3f(x, 0.0f,        y);

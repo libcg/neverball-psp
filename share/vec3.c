@@ -194,9 +194,9 @@ void m_rot(float *M, const float *v, float a)
     float U[16];
     float S[16];
 
-    const float s = fsinf(a);
-    const float c = fcosf(a);
-
+    float s, c;
+    fsincosf(a, &s, &c);
+    
     v_nrm(u, v);
 
     U[0] = u[0] * u[0]; U[4] = u[0] * u[1]; U[8] = u[0] * u[2];

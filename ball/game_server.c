@@ -617,9 +617,8 @@ static void game_update_view(float dt)
     case VIEW_MANUAL:  /* View vector is given by view angle. */
     case VIEW_TOPDOWN: /* Crude top-down view. */
 
-        view_e[2][0] = fsinf(V_RAD(view_a));
+        fsincosf(V_RAD(view_a), &view_e[2][0], &view_e[2][2]);
         view_e[2][1] = 0.0;
-        view_e[2][2] = fcosf(V_RAD(view_a));
 
         break;
 
@@ -936,9 +935,8 @@ void game_set_fly(float k, const struct s_file *fp)
 
     view_init();
 
-    z[0] = fsinf(V_RAD(view_a));
-    z[2] = fcosf(V_RAD(view_a));
-
+    fsincosf(V_RAD(view_a), &z[0], &z[2]);
+    
     v_cpy(view_e[0], x);
     v_cpy(view_e[1], y);
     v_cpy(view_e[2], z);

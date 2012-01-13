@@ -205,8 +205,10 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
             for (i = 0; i <= n; i++)
             {
                 float a = 0.5f * V_PI * (float) i / (float) n;
-                float s = r * fsinf(a);
-                float c = r * fcosf(a);
+                float s, c;
+                fsincosf(a, &s, &c);
+                s *= r;
+                c *= r;
 
                 float X  = x     + r - c;
                 float Ya = y + h + ((f & GUI_NW) ? (s - r) : 0);
@@ -224,8 +226,10 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
             for (i = 0; i <= n; i++)
             {
                 float a = 0.5f * V_PI * (float) i / (float) n;
-                float s = r * fsinf(a);
-                float c = r * fcosf(a);
+                float s, c;
+                fsincosf(a, &s, &c);
+                s *= r;
+                c *= r;
 
                 float X  = x + w - r + s;
                 float Ya = y + h + ((f & GUI_NE) ? (c - r) : 0);

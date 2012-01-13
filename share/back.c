@@ -53,11 +53,11 @@ void back_init(const char *s, int b)
             float k0 = (float)  i      / stacks;
             float k1 = (float) (i + 1) / stacks;
 
-            float s0 = fsinf(V_PI * (k0 - 0.5));
-            float c0 = fcosf(V_PI * (k0 - 0.5));
-            float s1 = fsinf(V_PI * (k1 - 0.5));
-            float c1 = fcosf(V_PI * (k1 - 0.5));
-
+            float s0, c0;
+            float s1, c1;
+            fsincosf(V_PI * (k0 - 0.5), &s0, &c0);
+            fsincosf(V_PI * (k1 - 0.5), &s1, &c1);
+            
             #ifdef __PSP__
             glBegin(GL_TRIANGLE_STRIP);
             #else
@@ -67,9 +67,9 @@ void back_init(const char *s, int b)
                 for (j = 0; j <= slices; j++)
                 {
                     float k = (float) j / slices;
-                    float s = fsinf(V_PI * k * 2.0);
-                    float c = fcosf(V_PI * k * 2.0);
-
+                    float s, c;
+                    fsincosf(V_PI * k * 2.0, &s, &c);
+                    
                     glTexCoord2f(k, 1.0f - k1);
                     glVertex3f(s * c1, c * c1, s1);
 

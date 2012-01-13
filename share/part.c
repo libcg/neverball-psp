@@ -79,9 +79,8 @@ void part_reset(float zh, float jh)
         part_goal[i].c[1] = 1.0f;
         part_goal[i].c[2] = 0.0f;
 
-        part_goal[i].p[0] = fsinf(a);
+        fsincosf(a, &part_goal[i].p[0], &part_goal[i].p[2]);
         part_goal[i].p[1] = (1.f - t) * goal_height;
-        part_goal[i].p[2] = fcosf(a);
 
         part_goal[i].v[0] = 0.f;
         part_goal[i].v[1] = 0.f;
@@ -104,9 +103,8 @@ void part_reset(float zh, float jh)
         part_jump[i].c[1] = 1.0f;
         part_jump[i].c[2] = 1.0f;
 
-        part_jump[i].p[0] = fsinf(a);
+        fsincosf(a, &part_jump[i].p[0], &part_jump[i].p[2]);
         part_jump[i].p[1] = (1.f - t) * jump_height;
-        part_jump[i].p[2] = fcosf(a);
 
         part_jump[i].v[0] = 0.f;
         part_jump[i].v[1] = vy;
@@ -196,14 +194,18 @@ void part_burst(const float *p, const float *c)
             float a = rnd(-1.0f * PI, +1.0f * PI);
             float b = rnd(+0.3f * PI, +0.5f * PI);
             float w = rnd(-4.0f * PI, +4.0f * PI);
+            float sin_a, cos_a, sin_b, cos_b;
+            
+            fsincosf(a, &sin_a, &cos_a);
+            fsincosf(b, &sin_b, &cos_b);
 
             part_coin[i].p[0] = p[0];
             part_coin[i].p[1] = p[1];
             part_coin[i].p[2] = p[2];
 
-            part_coin[i].v[0] = 4.f * fcosf(a) * fcosf(b);
-            part_coin[i].v[1] = 4.f *            fsinf(b);
-            part_coin[i].v[2] = 4.f * fsinf(a) * fcosf(b);
+            part_coin[i].v[0] = 4.f * cos_a * cos_b;
+            part_coin[i].v[1] = 4.f *         sin_b;
+            part_coin[i].v[2] = 4.f * sin_a * cos_b;
 
             part_coin[i].c[0] = c[0];
             part_coin[i].c[1] = c[1];
@@ -247,8 +249,7 @@ static void part_spin(struct part *part, int n, const float *g, float dt)
         {
             part[i].a += 30.f * dt;
 
-            part[i].p[0] = fsinf(V_RAD(part[i].a));
-            part[i].p[2] = fcosf(V_RAD(part[i].a));
+            fsincosf(V_RAD(part[i].a), &part[i].p[0], &part[i].p[2]);
         }
 }
 

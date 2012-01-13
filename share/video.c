@@ -205,8 +205,8 @@ void video_swap(void)
         /* Round the frames-per-second value to the nearest integer. */
 
         double k = 1000.0 * frames / ticks;
-        double f = floor(k);
-        double c = ceil (k);
+        double f = floorf(k);
+        double c = ceilf (k);
 
         /* Compute frame time and frames-per-second stats. */
 
@@ -267,8 +267,10 @@ void video_push_persp(float fov, float n, float f)
     GLfloat m[4][4];
 
     GLfloat r = fov / 2.f * V_PI / 180.f;
-    GLfloat s = sin(r);
-    GLfloat c = cos(r) / s;
+    GLfloat s, c;
+    
+    fsincosf(r, &s, &c);
+    c /= s;
 
     GLfloat a = ((GLfloat) config_get_d(CONFIG_WIDTH) /
                  (GLfloat) config_get_d(CONFIG_HEIGHT));
