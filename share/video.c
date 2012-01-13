@@ -80,13 +80,17 @@ int video_mode(int f, int w, int h)
     int stencil = config_get_d(CONFIG_REFLECTION)  ? 1 : 0;
     int buffers = config_get_d(CONFIG_MULTISAMPLE) ? 1 : 0;
     int samples = config_get_d(CONFIG_MULTISAMPLE);
+    #ifndef __PSP__
     int vsync   = config_get_d(CONFIG_VSYNC)       ? 1 : 0;
+    #endif
 
     SDL_GL_SetAttribute(SDL_GL_STEREO,             stereo);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,       stencil);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, buffers);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-    //SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL,       vsync); FIXME
+    #ifndef __PSP__
+    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL,       vsync);
+    #endif
 
     /* Require 16-bit double buffer with 16-bit depth buffer. */
 
@@ -105,7 +109,7 @@ int video_mode(int f, int w, int h)
         config_set_d(CONFIG_HEIGHT,     h);
 
         glViewport(0, 0, w, h);
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f); // FIXME 0.0 0.0 0.1 0.0
+        glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
 
         glEnable(GL_NORMALIZE);
         glEnable(GL_CULL_FACE);
@@ -228,7 +232,7 @@ static int grabbed = 0;
 
 void video_set_grab(int w)
 {
-    if (w)
+    /*if (w) FIXME
     {
         SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
@@ -238,7 +242,7 @@ void video_set_grab(int w)
         SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_WM_GrabInput(SDL_GRAB_ON);*/
     SDL_ShowCursor(SDL_DISABLE);
 
     grabbed = 1;
@@ -246,8 +250,8 @@ void video_set_grab(int w)
 
 void video_clr_grab(void)
 {
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    SDL_ShowCursor(SDL_ENABLE);
+    //SDL_WM_GrabInput(SDL_GRAB_OFF);
+    //SDL_ShowCursor(SDL_ENABLE);
     grabbed = 0;
 }
 
@@ -260,14 +264,14 @@ int  video_get_grab(void)
 
 void video_push_persp(float fov, float n, float f)
 {
-    GLdouble m[4][4];
+    GLfloat m[4][4];
 
-    GLdouble r = fov / 2 * V_PI / 180;
-    GLdouble s = sin(r);
-    GLdouble c = cos(r) / s;
+    GLfloat r = fov / 2.f * V_PI / 180.f;
+    GLfloat s = sin(r);
+    GLfloat c = cos(r) / s;
 
-    GLdouble a = ((GLdouble) config_get_d(CONFIG_WIDTH) /
-                  (GLdouble) config_get_d(CONFIG_HEIGHT));
+    GLfloat a = ((GLfloat) config_get_d(CONFIG_WIDTH) /
+                 (GLfloat) config_get_d(CONFIG_HEIGHT));
 
     glMatrixMode(GL_PROJECTION);
     {
@@ -275,23 +279,23 @@ void video_push_persp(float fov, float n, float f)
         glLoadIdentity();
 
         m[0][0] =  c/a;
-        m[0][1] =  0.0;
-        m[0][2] =  0.0;
-        m[0][3] =  0.0;
-        m[1][0] =  0.0;
+        m[0][1] =  0.0f;
+        m[0][2] =  0.0f;
+        m[0][3] =  0.0f;
+        m[1][0] =  0.0f;
         m[1][1] =    c;
-        m[1][2] =  0.0;
-        m[1][3] =  0.0;
-        m[2][0] =  0.0;
-        m[2][1] =  0.0;
+        m[1][2] =  0.0f;
+        m[1][3] =  0.0f;
+        m[2][0] =  0.0f;
+        m[2][1] =  0.0f;
         m[2][2] = -(f + n) / (f - n);
-        m[2][3] = -1.0;
-        m[3][0] =  0.0;
-        m[3][1] =  0.0;
-        m[3][2] = -2.0 * n * f / (f - n);
-        m[3][3] =  0.0;
+        m[2][3] = -1.0f;
+        m[3][0] =  0.0f;
+        m[3][1] =  0.0f;
+        m[3][2] = -2.0f * n * f / (f - n);
+        m[3][3] =  0.0f;
 
-        //glMultMatrixd(&m[0][0]); FIXME
+        glMultMatrixf(&m[0][0]);
     }
     glMatrixMode(GL_MODELVIEW);
 }

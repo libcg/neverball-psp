@@ -17,7 +17,11 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef __PSP__
 #include <pspkernel.h>
+#include <pspfpu.h>
+#include <psppower.h>
+#endif
 
 #include "glext.h"
 #include "config.h"
@@ -45,7 +49,9 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 /* Callbacks */
 int exit_callback(int arg1, int arg2, void *common) {
-  sceKernelExitGame();
+  SDL_Event exit_event;
+  exit_event.type = SDL_QUIT;
+  SDL_PushEvent(&exit_event);
   return 0; }
 int CallbackThread(SceSize args, void *argp) {
   int cbid;
@@ -403,10 +409,9 @@ int main(int argc, char *argv[])
 {
     #ifdef __PSP__
     SetupCallbacks();
-    sceKernelDelayThread(3000000); // FIXME
+    pspFpuSetEnable(0); // Disable FPU exceptions
+    scePowerSetClockFrequency(333, 333, 166); // Set the CPU to 333mhz
     #endif
-
-    printf("hello\n");
 
     SDL_Joystick *joy = NULL;
     int t1, t0, uniform;
@@ -417,16 +422,13 @@ int main(int argc, char *argv[])
                 fs_error());
         return 1;
     }
-    printf("fs\n");
 
     lang_init("neverball");
-    printf("lang\n");
 
     parse_args(argc, argv);
 
     config_paths(data_path);
     make_dirs_and_migrate();
-    printf("dir\n");
 
     /* Initialize SDL system and subsystems */
 
@@ -435,13 +437,11 @@ int main(int argc, char *argv[])
         fprintf(stderr, "%s\n", SDL_GetError());
         return 1;
     }
-    printf("SDL\n");
 
     /* Intitialize the configuration */
 
     config_init();
     config_load();
-    printf("config\n");
 
     /* Initialize the joystick. */
 
@@ -451,23 +451,18 @@ int main(int argc, char *argv[])
         if (joy)
             SDL_JoystickEventState(SDL_ENABLE);
     }
-    printf("joystick\n");
 
     /* Initialize the audio. */
 
     audio_init();
-    printf("audio\n");
     tilt_init();
-    printf("tilt\n");
 
     /* Initialize the video. */
 
     if (!video_init(TITLE, ICON))
         return 1;
-    printf("video\n");
 
     init_state(&st_null);
-    printf("initstate\n");
 
     /* Initialise demo playback. */
 
@@ -479,14 +474,11 @@ int main(int argc, char *argv[])
     }
     else
         goto_state(&st_title);
-    printf("state\n");
 
     /* Run the main game loop. */
 
     uniform = config_get_d(CONFIG_UNIFORM);
     t0 = SDL_GetTicks();
-
-    printf("then, loop\n");
 
     while (loop())
     {
@@ -537,6 +529,9 @@ int main(int argc, char *argv[])
 
     config_save();
 
+    #ifdef __PSP__
+    sceKernelExitGame();
+    #endif
     return 0;
 }
 

@@ -127,9 +127,31 @@ void part_init(float zh, float jh)
 
     glNewList(part_list, GL_COMPILE);
     {
+        #ifdef __PSP__
+        glBegin(GL_TRIANGLES);
+        {
+            glTexCoord2f(0.f, 0.f);
+            glVertex2f(-PART_SIZE, -PART_SIZE);
+
+            glTexCoord2f(1.f, 0.f);
+            glVertex2f(+PART_SIZE, -PART_SIZE);
+
+            glTexCoord2f(1.f, 1.f);
+            glVertex2f(+PART_SIZE, +PART_SIZE);
+
+            glTexCoord2f(0.f, 0.f);
+            glVertex2f(-PART_SIZE, -PART_SIZE);
+
+            glTexCoord2f(1.f, 1.f);
+            glVertex2f(+PART_SIZE, +PART_SIZE);
+
+            glTexCoord2f(0.f, 1.f);
+            glVertex2f(-PART_SIZE, +PART_SIZE);
+        }
+        glEnd();
+        #else
         glBegin(GL_QUADS);
         {
-            // TODO convert to triangles
             glTexCoord2f(0.f, 0.f);
             glVertex2f(-PART_SIZE, -PART_SIZE);
 
@@ -143,6 +165,7 @@ void part_init(float zh, float jh)
             glVertex2f(-PART_SIZE, +PART_SIZE);
         }
         glEnd();
+        #endif
     }
     glEndList();
 

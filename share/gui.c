@@ -122,7 +122,10 @@ static GLuint gui_list(int x, int y,
     GLfloat s0, t0;
     GLfloat s1, t1;
 
-    int W, H, ww, hh, d = h / 16;
+    int W, H, ww, hh;
+    #ifndef __PSP__
+    int d = h / 16;
+    #endif
 
     /* Assume the applied texture size is rect size rounded to power-of-two. */
 
@@ -138,26 +141,15 @@ static GLuint gui_list(int x, int y,
 
     glNewList(list, GL_COMPILE);
     {
-        #ifdef __PSP__ // No quad support
+        #ifdef __PSP__
         glBegin(GL_TRIANGLES);
         {
-            glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
-            glTexCoord2f(s0, t1); glVertex2i(x      + d, y      - d);
-            glTexCoord2f(s1, t1); glVertex2i(x + ww + d, y      - d);
-            glTexCoord2f(s1, t0); glVertex2i(x + ww + d, y + hh - d);
-            glTexCoord2f(s0, t1); glVertex2i(x      + d, y      - d);
-            glTexCoord2f(s1, t0); glVertex2i(x + ww + d, y + hh - d);
-            glTexCoord2f(s0, t0); glVertex2i(x      + d, y + hh - d);
-
-            glColor4fv(c0);
+            // No shadow, no gradient.
+            glColor4fv(c1);
             glTexCoord2f(s0, t1); glVertex2i(x,      y);
             glTexCoord2f(s1, t1); glVertex2i(x + ww, y);
-            glColor4fv(c1);
             glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
-            
-            glColor4fv(c0);
             glTexCoord2f(s0, t1); glVertex2i(x,      y);
-            glColor4fv(c1);
             glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
             glTexCoord2f(s0, t0); glVertex2i(x,      y + hh);
         }
@@ -202,7 +194,7 @@ static GLuint gui_rect(int x, int y, int w, int h, int f, int r)
 
     glNewList(list, GL_COMPILE);
     {
-        #ifdef __PSP__ // No quad support
+        #ifdef __PSP__
         glBegin(GL_TRIANGLE_STRIP);
         #else
         glBegin(GL_QUAD_STRIP);

@@ -125,7 +125,7 @@ static struct
     { &CONFIG_MULTISAMPLE,  "multisample",  0 },
     { &CONFIG_MIPMAP,       "mipmap",       0 },
     { &CONFIG_ANISO,        "aniso",        0 },
-    { &CONFIG_BACKGROUND,   "background",   1 },
+    { &CONFIG_BACKGROUND,   "background",   0 },
     { &CONFIG_SHADOW,       "shadow",       0 },
     { &CONFIG_AUDIO_BUFF,   "audio_buff",   AUDIO_BUFF_HI },
     { &CONFIG_MOUSE_SENSE,  "mouse_sense",  300 },
@@ -300,7 +300,7 @@ static int scan_key_and_value(char **dst_key, char **dst_val, char *line)
     {
         char *key, *val, *space;
 
-        for (key = line; *key && isspace(*key); key++);
+        for (key = line; *key && isspace((int)*key); key++);
 
         if (*key)
         {
@@ -310,7 +310,7 @@ static int scan_key_and_value(char **dst_key, char **dst_val, char *line)
         else
             return 0;
 
-        for (space = key; *space && !isspace(*space); space++);
+        for (space = key; *space && !isspace((int)*space); space++);
 
         if (*space)
         {
@@ -325,7 +325,7 @@ static int scan_key_and_value(char **dst_key, char **dst_val, char *line)
         else
             return 0;
 
-        for (val = space; *val && isspace(*val); val++);
+        for (val = space; *val && isspace((int)*val); val++);
 
         if (*val)
         {

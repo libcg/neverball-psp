@@ -3,7 +3,7 @@ PSPDIR=$(shell psp-config --psp-prefix)
 TARGET = Neverball
 LIBS = -lphysfs -lpng -lz -ljpeg -lSDL -lSDL_ttf -lfreetype                    \
        -lvorbisidec -logg -lGL -lm -lpspaudio -lpspgu -lpspirkeyb -lpsppower   \
-       -lpsphprm -lpsprtc -lpspvfpu -lc -lpsplibc
+       -lpsphprm -lpsprtc -lpspfpu -lpspvfpu -lc -lpsplibc
 CFLAGS = -O2 -Wall -G0 -g -I$(PSPDIR)/include/SDL -I./share -D__PSP__
 
 USERDIR   := ./user
@@ -83,6 +83,6 @@ BUILD_PRX = 0
 EXTRA_TARGETS = EBOOT.PBP
 PSP_LARGE_MEMORY=1
 PSP_EBOOT_TITLE = Neverball 1.5.4
-#PSP_EBOOT_ICON = icon0.png
+PSP_EBOOT_ICON = icon0.png
 
 include $(PSPSDK)/lib/build.mak

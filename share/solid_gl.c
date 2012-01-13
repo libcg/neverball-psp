@@ -221,7 +221,18 @@ static const struct s_mtrl *sol_back_bill(const struct s_file *fp,
 
             mp = sol_draw_mtrl(fp, fp->mv + rp->mi, mp);
 
-            // TODO convert to triangles
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLES);
+            {
+                glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, y0);
+                glTexCoord2f(1.0f, 0.0f); glVertex2f(+w / 2, y0);
+                glTexCoord2f(1.0f, 1.0f); glVertex2f(+w / 2, y1);
+                glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, y0);
+                glTexCoord2f(1.0f, 1.0f); glVertex2f(+w / 2, y1);
+                glTexCoord2f(0.0f, 1.0f); glVertex2f(-w / 2, y1);
+            }
+            glEnd();
+            #else
             glBegin(GL_QUADS);
             {
                 glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, y0);
@@ -230,6 +241,7 @@ static const struct s_mtrl *sol_back_bill(const struct s_file *fp,
                 glTexCoord2f(0.0f, 1.0f); glVertex2f(-w / 2, y1);
             }
             glEnd();
+            #endif
         }
         glPopMatrix();
     }
@@ -420,7 +432,18 @@ void sol_bill(const struct s_file *fp, const float *M, float t)
             if (fabsf(ry) > 0.0f) glRotatef(ry, 0.0f, 1.0f, 0.0f);
             if (fabsf(rz) > 0.0f) glRotatef(rz, 0.0f, 0.0f, 1.0f);
 
-            // TODO convert to triangles
+            #ifdef __PSP__
+            glBegin(GL_TRIANGLES);
+            {
+                glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, -h / 2);
+                glTexCoord2f(1.0f, 0.0f); glVertex2f(+w / 2, -h / 2);
+                glTexCoord2f(1.0f, 1.0f); glVertex2f(+w / 2, +h / 2);
+                glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, -h / 2);
+                glTexCoord2f(1.0f, 1.0f); glVertex2f(+w / 2, +h / 2);
+                glTexCoord2f(0.0f, 1.0f); glVertex2f(-w / 2, +h / 2);
+            }
+            glEnd();
+            #else
             glBegin(GL_QUADS);
             {
                 glTexCoord2f(0.0f, 0.0f); glVertex2f(-w / 2, -h / 2);
@@ -429,6 +452,7 @@ void sol_bill(const struct s_file *fp, const float *M, float t)
                 glTexCoord2f(0.0f, 1.0f); glVertex2f(-w / 2, +h / 2);
             }
             glEnd();
+            #endif
         }
         glPopMatrix();
     }
