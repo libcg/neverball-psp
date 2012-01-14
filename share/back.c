@@ -30,6 +30,8 @@ static GLuint back_text;
 
 /*---------------------------------------------------------------------------*/
 
+#include <pspkernel.h>
+
 void back_init(const char *s, int b)
 {
     int i, slices = b ? 32 : 16;
