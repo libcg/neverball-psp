@@ -800,6 +800,7 @@ static void game_draw_back(int pose, int d, float t)
     glPopMatrix();
 }
 
+#ifndef __PSP__
 static void game_clip_refl(int d)
 {
     /* Fudge to eliminate the floor from reflection. */
@@ -811,7 +812,7 @@ static void game_clip_refl(int d)
     e[2] = 0;
     e[3] = k;
 
-    //glClipPlane(GL_CLIP_PLANE0, e); FIXME
+    glClipPlane(GL_CLIP_PLANE0, e);
 }
 
 static void game_clip_ball(int d, const float *p)
@@ -859,11 +860,11 @@ static void game_clip_ball(int d, const float *p)
     nz[1] *= d;
     ny[1] *= d;
 
-    // FIXME
-    //glClipPlane(GL_CLIP_PLANE1, nz);
-    //glClipPlane(GL_CLIP_PLANE2, pz);
-    //glClipPlane(GL_CLIP_PLANE3, ny);
+    glClipPlane(GL_CLIP_PLANE1, nz);
+    glClipPlane(GL_CLIP_PLANE2, pz);
+    glClipPlane(GL_CLIP_PLANE3, ny);
 }
+#endif
 
 static void game_draw_fore(int pose, const float *M, int d, float t)
 {
@@ -878,11 +879,13 @@ static void game_draw_fore(int pose, const float *M, int d, float t)
 
         /* Compute clipping planes for reflection and ball facing. */
 
+        #ifndef __PSP__ // Useless on PSP since clip planes are not supported
         game_clip_refl(d);
         game_clip_ball(d, ball_p);
 
         if (d < 0)
-            ;//glEnable(GL_CLIP_PLANE0); FIXME
+            glEnable(GL_CLIP_PLANE0);
+        #endif
 
         switch (pose)
         {
@@ -944,8 +947,10 @@ static void game_draw_fore(int pose, const float *M, int d, float t)
         glEnable(GL_LIGHTING);
         //glDisable(GL_COLOR_MATERIAL); FIXME
 
+        #ifndef __PSP__
         if (d < 0)
             glDisable(GL_CLIP_PLANE0);
+        #endif
     }
     glPopMatrix();
 }

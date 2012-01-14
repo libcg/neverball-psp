@@ -158,7 +158,7 @@ static const struct s_mtrl *sol_draw_mtrl(const struct s_file *fp,
     if ((mp->fl & M_TWO_SIDED) && !(mq->fl & M_TWO_SIDED))
     {
         glDisable(GL_CULL_FACE);
-        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
+        //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1); FIXME
     }
 
     /* Disable visibility-from-behind. */
@@ -166,21 +166,21 @@ static const struct s_mtrl *sol_draw_mtrl(const struct s_file *fp,
     if ((mq->fl & M_TWO_SIDED) && !(mp->fl & M_TWO_SIDED))
     {
         glEnable(GL_CULL_FACE);
-        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
+        //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0); FIXME
     }
 
     /* Enable decal offset. */
 
     if ((mp->fl & M_DECAL) && !(mq->fl & M_DECAL))
     {
-        glEnable(GL_POLYGON_OFFSET_FILL);
+        //glEnable(GL_POLYGON_OFFSET_FILL); FIXME
         glPolygonOffset(-1.0f, -2.0f);
     }
 
     /* Disable decal offset. */
 
     if ((mq->fl & M_DECAL) && !(mp->fl & M_DECAL))
-        glDisable(GL_POLYGON_OFFSET_FILL);
+        ;//glDisable(GL_POLYGON_OFFSET_FILL); FIXME
 
     return mp;
 }
@@ -510,7 +510,7 @@ static void sol_shad_body(const struct s_file *fp,
 
     if (fl & M_DECAL)
     {
-        glEnable(GL_POLYGON_OFFSET_FILL);
+        //glEnable(GL_POLYGON_OFFSET_FILL); FIXME
         glPolygonOffset(-1.0f, -2.0f);
     }
 
@@ -528,7 +528,7 @@ static void sol_shad_body(const struct s_file *fp,
     glEnd();
 
     if (fl & M_DECAL)
-        glDisable(GL_POLYGON_OFFSET_FILL);
+        ;//glDisable(GL_POLYGON_OFFSET_FILL); FIXME
 }
 
 static void sol_shad_list(const struct s_file *fp,
