@@ -2,9 +2,10 @@ PSPSDK=$(shell psp-config --pspsdk-path)
 PSPDIR=$(shell psp-config --psp-prefix)
 TARGET = Neverball
 LIBS = ./psp/lib/libphysfs.a ./psp/lib/libpng.a ./psp/lib/libz.a               \
-       ./psp/lib/libjpeg.a ./psp/lib/libSDL.a -lSDL_ttf -lfreetype             \
-       -lvorbisidec -logg -lm -lpspaudio -lpspgu ./psp/lib/libGL.a             \
-       -lpspirkeyb -lpsppower -lpsphprm -lpsprtc -lpspfpu -lpspvfpu
+       ./psp/lib/libjpeg.a ./psp/lib/libSDL.a ./psp/lib/libSDL_ttf.a           \
+       ./psp/lib/libfreetype.a ./psp/lib/libvorbisidec.a ./psp/lib/libogg.a    \
+       ./psp/lib/libGL.a -lm -lpspaudio -lpspgu -lpspirkeyb -lpsppower         \
+       -lpsphprm -lpsprtc -lpspfpu -lpspvfpu
        
 USERDIR   := ./user
 DATADIR   := ./data
