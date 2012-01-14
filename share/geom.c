@@ -383,7 +383,9 @@ void fade_draw(float k)
 
         video_push_ortho();
         {
-            //glEnable(GL_COLOR_MATERIAL); FIXME
+            #ifndef __PSP__
+            glEnable(GL_COLOR_MATERIAL);
+            #endif
             glDisable(GL_LIGHTING);
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_TEXTURE_2D);
@@ -391,14 +393,10 @@ void fade_draw(float k)
             glColor4f(0.0f, 0.0f, 0.0f, k);
 
             #ifdef __PSP__
-            glBegin(GL_TRIANGLES);
+            glBegin(GL_SPRITES_PSP);
             {
                 glVertex2i(0, 0);
-                glVertex2i(w, 0);
                 glVertex2i(w, h);
-                glVertex2i(0, 0);
-                glVertex2i(w, h);
-                glVertex2i(0, h);
             }
             glEnd();
             #else
@@ -417,7 +415,9 @@ void fade_draw(float k)
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
-            //glDisable(GL_COLOR_MATERIAL); FIXME
+            #ifndef __PSP__
+            glDisable(GL_COLOR_MATERIAL);
+            #endif
         }
         video_pop_matrix();
     }

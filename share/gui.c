@@ -142,16 +142,12 @@ static GLuint gui_list(int x, int y,
     glNewList(list, GL_COMPILE);
     {
         #ifdef __PSP__
-        glBegin(GL_TRIANGLES);
+        glBegin(GL_SPRITES_PSP);
         {
             // No shadow, no gradient.
             glColor4fv(c1);
-            glTexCoord2f(s0, t1); glVertex2i(x,      y);
-            glTexCoord2f(s1, t1); glVertex2i(x + ww, y);
-            glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
-            glTexCoord2f(s0, t1); glVertex2i(x,      y);
-            glTexCoord2f(s1, t0); glVertex2i(x + ww, y + hh);
             glTexCoord2f(s0, t0); glVertex2i(x,      y + hh);
+            glTexCoord2f(s1, t1); glVertex2i(x + ww, y     );
         }
         glEnd();
         #else
