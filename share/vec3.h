@@ -22,9 +22,11 @@
 #define V_RAD(d) (d * V_PI / 180.f)
 #define V_DEG(r) (r * 180.f / V_PI)
 
+#ifndef __PSP__
+
 #define fsinf(a)      ((float) sinf((float) a))
 #define fcosf(a)      ((float) cosf((float) a))
-#define ftanf(a)      ((float) tanf(() a))
+#define ftanf(a)      ((float) tanf((float) a))
 #define fabsf(a)      ((float) fabsf((float) a))
 #define fsqrtf(a)     ((float) sqrtf((float) a))
 #define facosf(a)     ((float) acosf((float) a))
@@ -32,8 +34,6 @@
 #define fatan2f(x, y) ((float) atan2f((float) x, (float) y))
 #define fsincosf(x, s, c) \
     ((void ) sincosf((float) x, (float*)s, (float*)c))
-
-/*---------------------------------------------------------------------------*/
 
 #define v_dot(u, v)  ((u)[0] * (v)[0] + (u)[1] * (v)[1] + (u)[2] * (v)[2])
 #define v_len(u)     fsqrtf(v_dot(u, u))
@@ -79,6 +79,39 @@
     (u)[1] = (p)[1] + (v)[1] * (t); \
     (u)[2] = (p)[2] + (v)[2] * (t); \
 }
+
+#else
+
+#define fsinf(a)      ((float) vfpu_sinf((float) a))
+#define fcosf(a)      ((float) vfpu_cosf((float) a))
+#define ftanf(a)      ((float) vfpu_tanf((float) a))
+#define fabsf(a)      ((float) fabsf((float) a)) // Faster with allegrex
+#define fsqrtf(a)     ((float) sqrtf((float) a)) // Faster with allegrex
+#define facosf(a)     ((float) vfpu_acosf((float) a))
+#define fmodf(x,y)    ((float) fmodf((float) x, (float) y)) // Faster with allegrex
+#define fatan2f(x, y) ((float) vfpu_atan2f((float) x, (float) y))
+#define fsincosf(x, s, c) \
+    ((void ) vfpu_sincosf((float) x, (float*)s, (float*)c))
+
+float   vfpu_sinf(const float);
+float   vfpu_cosf(const float);
+float   vfpu_tanf(const float);
+float   vfpu_acosf(const float);
+float   vfpu_atanf(const float);
+float   vfpu_atan2f(const float, const float);
+void    vfpu_sincosf(const float, float *, float *);
+
+float   v_dot(const float *, const float *);
+float   v_len(const float *);
+void    v_cpy(float *, const float *);
+void    v_inv(float *, const float *);
+void    v_scl(float *, const float *, const float);
+void    v_add(float *, const float *, const float *);
+void    v_sub(float *, const float *, const float *);
+void    v_mid(float *, const float *, const float *);
+void    v_mad(float *, const float *, const float *, const float);
+
+#endif
 
 /*---------------------------------------------------------------------------*/
 

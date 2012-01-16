@@ -24,9 +24,368 @@
 #define E 14
 #define F 15
 
+/*---------------------------------------------------------------------------*/
+
 #define TINY 1e-5
 
+#ifdef __PSP__
+
+float vfpu_sinf(const float x)
+{
+  float n;
+  
+  __asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s000, %1\n"
+		"vcst.s		s001, VFPU_2_PI\n"
+		"vmul.s		s000, s000, s001\n"
+		"vsin.s	  s000, s000\n"
+		"sv.s			s000, %0\n"
+		".set			pop\n"
+		: "=m"(n)
+		: "m"(x)
+	);
+	
+	return n;
+}
+
+float vfpu_cosf(const float x)
+{
+  float n;
+  
+  __asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s000, %1\n"
+		"vcst.s		s001, VFPU_2_PI\n"
+		"vmul.s		s000, s000, s001\n"
+		"vcos.s	  s000, s000\n"
+		"sv.s			s000, %0\n"
+		".set			pop\n"
+		: "=m"(n)
+		: "m"(x)
+	);
+	
+	return n;
+}
+
+float vfpu_tanf(const float x)
+{
+  float n;
+  
+	__asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s000, %1\n"
+		"vcst.s		s001, VFPU_2_PI\n"
+		"vmul.s		s000, s000, s001\n"
+		"vrot.p		c002, s000, [c, s]\n"
+		"vdiv.s		s000, s003, s002\n"
+		"sv.s			s000, %0\n"
+		".set			pop\n"
+		: "=m"(n)
+		: "m"(x)
+	);
+	
+	return n;
+}
+
+float vfpu_acosf(const float x)
+{
+  float n;
+
+  __asm__ volatile (
+    "mtv     %1, s000\n"
+    "vcst.s  s001, VFPU_PI_2\n"
+    "vasin.s s000, s000\n"
+    "vocp.s  s000, s000\n"
+    "vmul.s  s000, s000, s001\n"
+    "mfv     %0, s000\n"
+    : "=r"(n)
+    : "r"(x)
+  );
+  
+  return n;
+}
+
+
+float vfpu_atanf(const float x)
+{
+  float n;
+  
+  __asm__ volatile (
+    "mtv      %1, s000\n"
+    "vmul.s   s001, s000, s000\n"
+    "vadd.s   s001, s001, s001[1]\n"
+    "vrsq.s   s001, s001\n"
+    "vmul.s   s000, s000, s001\n"
+    "vasin.s  s000, s000\n"
+    "vcst.s   s001, VFPU_PI_2\n"
+    "vmul.s   s000, s000, s001\n"
+    "mfv      %0, s000\n"
+    : "=r"(n)
+    : "r"(x)
+  );
+  
+  return n;
+}
+
+
+float vfpu_atan2f(const float y, const float x)
+{
+  float n;
+
+  if (fabsf(x) >= fabsf(y))
+  {
+    n = vfpu_atanf(y/x);
+    if (x < 0.0f)
+    {
+      n += (y >= 0.0f ? V_PI : -V_PI);
+    }
+  }
+  else
+  {
+    n = -vfpu_atanf(x/y);
+    n += (y < 0.0f ? -V_PI/2.0f : V_PI/2.0f);
+  }
+    
+  return n;
+}
+
+
+void vfpu_sincosf(const float x, float * s, float * c)
+{
+  __asm__ volatile (
+    "mtv      %2, s002\n"
+    "vcst.s   s003, VFPU_2_PI\n"
+    "vmul.s   s002, s002, s003\n"
+    "vrot.p   c000, s002, [s, c]\n"
+    "mfv      %0, s000\n"
+    "mfv      %1, s001\n"
+    : "=r"(*s), "=r"(*c)
+    : "r"(x)
+  );
+}
+
 /*---------------------------------------------------------------------------*/
+
+
+float v_dot(const float * v_a, const float * v_b)
+{
+	float n;
+	
+	__asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s000, 0 + %1\n"
+		"lv.s			s001, 4 + %1\n"
+		"lv.s			s002, 8 + %1\n"
+		"lv.s			s010, 0 + %2\n"
+		"lv.s			s011, 4 + %2\n"
+		"lv.s			s012, 8 + %2\n"
+		"vdot.t		s000, c000, c010\n"
+		"sv.s			s000, %0\n"
+		".set			pop\n"
+		: "=m"(n)
+		: "m"(*v_a), "m"(*v_b)
+	);
+	
+	return n;
+}
+
+float v_len(const float * v)
+{
+  float n;
+
+  __asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s000, 0 + %1\n"
+		"lv.s			s001, 4 + %1\n"
+		"lv.s			s002, 8 + %1\n"
+		"vdot.t		s000, c000, c000\n"
+		"vsqrt.s	s000, s000\n"
+		"sv.s			s000, %0\n"
+		".set			pop\n"
+		: "=m"(n)
+		: "m"(*v)
+	);
+	
+	return n;
+}
+
+void v_cpy(float * n, const float * v)
+{
+  n[0] = v[0];
+  n[1] = v[1];
+  n[2] = v[2];
+}
+
+void v_inv(float * n, const float * v)
+{
+  n[0] = -v[0];
+  n[1] = -v[1];
+  n[2] = -v[2];
+}
+
+void v_scl(float * n, const float * v, const float k)
+{
+	__asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"mfc1			$8,   %2\n"
+		"mtv			$8,   s010\n"
+		"lv.s			s000, 0 + %1\n"
+		"lv.s			s001, 4 + %1\n"
+		"lv.s			s002, 8 + %1\n"
+		"vscl.t		c000, c000, s010\n"
+		"sv.s			s000, 0 + %0\n"
+		"sv.s			s001, 4 + %0\n"
+		"sv.s			s002, 8 + %0\n"
+		".set			pop\n"
+		: "=m"(*n)
+		: "m"(*v), "f"(k)
+		: "$8"
+	);
+}
+
+void v_add(float * n, const float * v_a, const float * v_b)
+{
+    __asm__ (
+		  ".set			push\n"
+		  ".set			noreorder\n"
+		  "lv.s			s000, 0 + %1\n"
+		  "lv.s			s001, 4 + %1\n"
+		  "lv.s			s002, 8 + %1\n"
+		  "lv.s			s010, 0 + %2\n"
+		  "lv.s			s011, 4 + %2\n"
+		  "lv.s			s012, 8 + %2\n"
+		  "vadd.t		c000, c000, c010\n"
+		  "sv.s			s000, 0 + %0\n"
+		  "sv.s			s001, 4 + %0\n"
+		  "sv.s			s002, 8 + %0\n"
+		  ".set			pop\n"
+		  : "=m"(*n)
+		  : "m"(*v_a), "m"(*v_b)
+	  );
+}
+
+void v_sub(float * n, const float * v_a, const float * v_b)
+{
+    __asm__ (
+		  ".set			push\n"
+		  ".set			noreorder\n"
+		  "lv.s			s000, 0 + %1\n"
+		  "lv.s			s001, 4 + %1\n"
+		  "lv.s			s002, 8 + %1\n"
+		  "lv.s			s010, 0 + %2\n"
+		  "lv.s			s011, 4 + %2\n"
+		  "lv.s			s012, 8 + %2\n"
+		  "vsub.t		c000, c000, c010\n"
+		  "sv.s			s000, 0 + %0\n"
+		  "sv.s			s001, 4 + %0\n"
+		  "sv.s			s002, 8 + %0\n"
+		  ".set			pop\n"
+		  : "=m"(*n)
+		  : "m"(*v_a), "m"(*v_b)
+	  );
+}
+
+void v_mid(float * n, const float * v_a, const float * v_b)
+{
+    __asm__ (
+		  ".set			push\n"
+		  ".set			noreorder\n"
+		  "lv.s			s000, 0 + %1\n"
+		  "lv.s			s001, 4 + %1\n"
+		  "lv.s			s002, 8 + %1\n"
+		  "lv.s			s010, 0 + %2\n"
+		  "lv.s			s011, 4 + %2\n"
+		  "lv.s			s012, 8 + %2\n"
+		  "vadd.t		c000, c000, c010\n"
+		  "vrcp.s   s010, s011[2]\n"
+		  "vscl.t		c000, c000, s010\n"
+		  "sv.s			s000, 0 + %0\n"
+		  "sv.s			s001, 4 + %0\n"
+		  "sv.s			s002, 8 + %0\n"
+		  ".set			pop\n"
+		  : "=m"(*n)
+		  : "m"(*v_a), "m"(*v_b)
+	  );
+}
+
+void v_mad(float * n, const float * v_a, const float * v_b, const float k)
+{
+	__asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"mfc1			$8,   %3\n"
+		"mtv			$8,   s020\n"
+		"lv.s			s000, 0 + %1\n"
+		"lv.s			s001, 4 + %1\n"
+		"lv.s			s002, 8 + %1\n"
+		"lv.s			s010, 0 + %2\n"
+		"lv.s			s011, 4 + %2\n"
+		"lv.s			s012, 8 + %2\n"
+		"vscl.t		c010, c010, s020\n"
+		"vadd.t   c000, c000, c010\n"
+		"sv.s			s000, 0 + %0\n"
+		"sv.s			s001, 4 + %0\n"
+		"sv.s			s002, 8 + %0\n"
+		".set			pop\n"
+		: "=m"(*n)
+		: "m"(*v_a), "m"(*v_b), "f"(k)
+		: "$8"
+	);
+}
+
+void v_nrm(float *n, const float *v)
+{
+    float d = v_len(v);
+
+    __asm__ (
+		  ".set			push\n"
+		  ".set			noreorder\n"
+		  "mfc1			$8,   %2\n"
+		  "mtv			$8,   s010\n"
+		  "lv.s			s000, 0 + %1\n"
+		  "lv.s			s001, 4 + %1\n"
+		  "lv.s			s002, 8 + %1\n"
+		  "vrcp.s   s010, s010\n"
+		  "vscl.t		c000, c000, s010\n"
+		  "sv.s			s000, 0 + %0\n"
+		  "sv.s			s001, 4 + %0\n"
+		  "sv.s			s002, 8 + %0\n"
+		  ".set			pop\n"
+		  : "=m"(*n)
+		  : "m"(*v), "f"(d)
+		  : "$8"
+	  );
+}
+
+void v_crs(float *u, const float *v, const float *w)
+{
+	__asm__ (
+		".set			push\n"
+		".set			noreorder\n"
+		"lv.s			s010, 0 + %1\n"
+		"lv.s			s011, 4 + %1\n"
+		"lv.s			s012, 8 + %1\n"
+		"lv.s			s020, 0 + %2\n"
+		"lv.s			s021, 4 + %2\n"
+		"lv.s			s022, 8 + %2\n"
+		"vcrsp.t	c000, c010, c020\n"
+		"sv.s			s000, 0 + %0\n"
+		"sv.s			s001, 4 + %0\n"
+		"sv.s			s002, 8 + %0\n"
+		".set			pop\n"
+		: "=m"(*u)
+		: "m"(*v), "m"(*w)
+	);
+}
+
+#else
 
 void v_nrm(float *n, const float *v)
 {
@@ -43,6 +402,8 @@ void v_crs(float *u, const float *v, const float *w)
     u[1] = v[2] * w[0] - v[0] * w[2];
     u[2] = v[0] * w[1] - v[1] * w[0];
 }
+
+#endif
 
 /*---------------------------------------------------------------------------*/
 

@@ -12,6 +12,8 @@
  * General Public License for more details.
  */
 
+#include <pspkernel.h>
+
 #include "video.h"
 #include "vec3.h"
 #include "glext.h"
@@ -212,7 +214,6 @@ void video_swap(void)
 
         fps = (int) ((c - k < k - f) ? c : f);
         ms  = (float) ticks / (float) frames;
-        printf("%d fps (%g ms)\n",fps,ms); // FIXME
 
         /* Reset the counters for the next update. */
 
@@ -221,7 +222,8 @@ void video_swap(void)
 
         /* Output statistics if configured. */
 
-        if (config_get_d(CONFIG_STATS))
+        //if (config_get_d(CONFIG_STATS)) FIXME
+            fprintf(stdout, "%dkB", sceKernelTotalFreeMemSize()/1024);
             fprintf(stdout, "%4d %8.4f\n", fps, ms);
     }
 }
@@ -232,7 +234,8 @@ static int grabbed = 0;
 
 void video_set_grab(int w)
 {
-    /*if (w) FIXME
+    #ifndef __PSP__
+    if (w)
     {
         SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
@@ -242,7 +245,8 @@ void video_set_grab(int w)
         SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);*/
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+    #endif
     SDL_ShowCursor(SDL_DISABLE);
 
     grabbed = 1;
@@ -250,8 +254,10 @@ void video_set_grab(int w)
 
 void video_clr_grab(void)
 {
-    //SDL_WM_GrabInput(SDL_GRAB_OFF);
-    //SDL_ShowCursor(SDL_ENABLE);
+    #ifndef __PSP__
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_ShowCursor(SDL_ENABLE);
+    #endif
     grabbed = 0;
 }
 

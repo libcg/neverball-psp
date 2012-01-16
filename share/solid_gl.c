@@ -346,10 +346,15 @@ static const struct s_mtrl *sol_draw_body(const struct s_file *fp,
 
                 glBegin(GL_TRIANGLES);
                 {
+                    // FIXME
+                    glDisable(GL_LIGHTING); 
+                    glDisable(GL_TEXTURE_2D);
                     for (li = 0; li < bp->lc; li++)
                         sol_draw_lump(fp, fp->lv + bp->l0 + li, mi);
                     for (gi = 0; gi < bp->gc; gi++)
                         sol_draw_geom(fp, fp->gv + fp->iv[bp->g0 + gi], mi);
+                    glEnable(GL_TEXTURE_2D);
+                    glEnable(GL_LIGHTING);
                 }
                 glEnd();
             }

@@ -184,6 +184,17 @@ GLuint make_image_from_file(const char *filename)
         free(p);
     }
 
+    // TODO remove
+    if (p) printf("Success");
+    else printf("Fail   ");
+    printf(" - %s %d %d %d\n", filename, w, h, b);
+    
+    int error = glGetError();
+    if (glGetError())
+    {
+      printf("GL error catched %x\n", error);
+    }
+
     return o;
 }
 

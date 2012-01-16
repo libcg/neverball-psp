@@ -23,7 +23,7 @@
 
 /*---------------------------------------------------------------------------*/
 
-#define PI 3.1415926535897932
+#define PI 3.1415927f
 
 static GLuint back_list;
 static GLuint back_text;
@@ -92,13 +92,14 @@ void back_free(void)
 
     if (glIsTexture(back_text))
         glDeleteTextures(1, &back_text);
-
+    
     back_list = 0;
     back_text = 0;
 }
 
 void back_draw(float t)
 {
+    return; // FIXME!
     glPushMatrix();
     {
         GLfloat dx =  60.f * fsinf(t / 10.f) + 90.f;
